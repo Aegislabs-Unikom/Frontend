@@ -52,6 +52,27 @@ async ({ email, password }: { email: string; password: string }) => {
   }
 });
 
+export const register = createAsyncThunk('auth/login',
+async ({ nama, email, password, confPassword  }: { nama: string, email: string; password: string, confPassword: string }) => {
+  try {
+    console.log("tes");
+    const response = await axios.post(`https://a308-103-172-116-212.ngrok-free.app/api/user/register`, {
+        nama,
+        email,
+        password,
+        confPassword
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    const responseData = response.data;
+    console.log(responseData);
+  } catch (error) {
+    return console.log(error);
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,

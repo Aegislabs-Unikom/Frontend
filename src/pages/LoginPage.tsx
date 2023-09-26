@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { loginAsync } from "../store/auth/AuthSlice";
 import { withRouter } from "../helper/withRouter";
+import { Link } from "react-router-dom";
 
 interface LoginState {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -14,7 +15,7 @@ class Login extends Component<any, LoginState> {
       this.handleFormSubmit=this.handleFormSubmit.bind(this);
 
       this.state = {
-        username: "",
+        email: "",
         password: ""
       };
     }
@@ -23,11 +24,11 @@ class Login extends Component<any, LoginState> {
     e.preventDefault();
   
     try {
-      const { username, password } = this.state;
+      const { email, password } = this.state;
       this.props //dispatch 
-        .authenticateAndFetchData({ username, password })
+        .loginAsync({ email, password })
         .then(() => {
-          this.props.router.navigate('/');
+          // this.props.router.navigate('/');
         })
         .catch((error: any) => {
           console.error(error);
@@ -48,11 +49,11 @@ class Login extends Component<any, LoginState> {
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit}>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Username</label>
+                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Email</label>
                                 <input type="text"
-                                    name="username"
-                                    value={this.state.username}
-                                    onChange={(e) => this.setState({ username: e.target.value })}
+                                    name="email"
+                                    value={this.state.email}
+                                    onChange={(e) => this.setState({ email: e.target.value })}
                                     className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
                             </div>
                             <div>
@@ -64,6 +65,12 @@ class Login extends Component<any, LoginState> {
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <button type="submit" className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500">Login</button>
+                            <div>
+                              Does'nt have account? 
+                              <Link to={'/register'}>
+                                 Register
+                              </Link>
+                            </div>
                         </form>
                     </div>
                 </div>
