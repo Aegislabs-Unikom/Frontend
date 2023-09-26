@@ -10,7 +10,7 @@ interface RegisterState {
     confPassword:string;
 }
 
-class Login extends Component<any, RegisterState> {
+class Register extends Component<any, RegisterState> {
     constructor(props: {}) {
         super(props);
         this.handleFormSubmit=this.handleFormSubmit.bind(this);
@@ -26,7 +26,7 @@ class Login extends Component<any, RegisterState> {
   handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { nama, email, password, confPassword } = this.state;
-    
+
     if (password === confPassword) {
         try {
             this.props //dispatch 
@@ -52,7 +52,7 @@ class Login extends Component<any, RegisterState> {
                 <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl ">
-                            Register
+                            Sign Up
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit}>
                             <div>
@@ -81,7 +81,7 @@ class Login extends Component<any, RegisterState> {
                             </div>
                             <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">Konfirmasi Password</label>
-                                <input type="confPassword" 
+                                <input type="password"
                                     name="confPassword" 
                                     value={this.state.confPassword}
                                     onChange={(e) => this.setState({ confPassword: e.target.value })}
@@ -99,13 +99,13 @@ class Login extends Component<any, RegisterState> {
 };
 
 const mapDispatchToProps = {
-    register, // Map the action to props
+    register,
 };
 
 const mapStateToProps = (state: any) => {
-  return{
+  return {
     userData: state.auth
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Register));

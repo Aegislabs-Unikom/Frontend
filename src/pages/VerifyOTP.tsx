@@ -77,7 +77,6 @@ class Login extends Component<any, LoginState> {
                 </div>
             </div>
         </section>
-      
     );
   }
 };

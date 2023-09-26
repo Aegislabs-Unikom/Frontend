@@ -29,8 +29,7 @@ const initialState: UserState = {
 export const loginAsync = createAsyncThunk('auth/login',
 async ({ email, password }: { email: string; password: string }) => {
   try {
-    console.log("tes");
-    const response = await axios.post(`https://a308-103-172-116-212.ngrok-free.app/api/user/login`, {
+    const response = await axios.post(`https://bc34-103-172-116-212.ngrok-free.app/api/user/login`, {
         email,
         password,
       }, {
@@ -38,10 +37,10 @@ async ({ email, password }: { email: string; password: string }) => {
           'Content-Type': 'application/json',
         },
       });
-    const responseData = response.data;
-    console.log(responseData);
+    
 
     if (response.status === 200) {
+      console.log(response.data.msg);
       return response.data;
     } else {
       throw new Error("Request failed with status: " + response.status);
@@ -52,11 +51,11 @@ async ({ email, password }: { email: string; password: string }) => {
   }
 });
 
-export const register = createAsyncThunk('auth/login',
+export const register = createAsyncThunk('auth/register',
 async ({ nama, email, password, confPassword  }: { nama: string, email: string; password: string, confPassword: string }) => {
   try {
     console.log("tes");
-    const response = await axios.post(`https://a308-103-172-116-212.ngrok-free.app/api/user/register`, {
+    const response = await axios.post(`https://bc34-103-172-116-212.ngrok-free.app/api/user/register`, {
         nama,
         email,
         password,
@@ -70,6 +69,16 @@ async ({ nama, email, password, confPassword  }: { nama: string, email: string; 
     console.log(responseData);
   } catch (error) {
     return console.log(error);
+  }
+});
+
+export const logoutAsync = createAsyncThunk('auth/logout', async () => {
+  try {
+    await axios.delete(`https://bc34-103-172-116-212.ngrok-free.app/api/user/logout`);
+    console.log("sip logout");
+  } catch (error:any) {
+    console.error(error.message);
+    throw error;
   }
 });
 
