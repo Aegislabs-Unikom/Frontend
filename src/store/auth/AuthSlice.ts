@@ -1,86 +1,130 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit'; // Implement these API functions
+import axios from 'axios';
+
+interface User {
+  email: string;
+  nama: string;
+  role: string;
+  is_verified: string;
+};
+
+interface Data {
+  accessToken: string;
+  user: User[];
+}
+
+interface UserState { //untuk state storage
+  error: string;
+  msg: string;
+  data: Data[];
+}
+
+const initialState: UserState = {
+  data: [],
+  error: 'true',
+  msg: 'string',
+};
+
+const baseURL = 'https://aegisquest-ernafpm2wq-uc.a.run.app';
 
 export const loginAsync = createAsyncThunk('auth/login',
 async ({ email, password }: { email: string; password: string }) => {
   try {
-    console.log("tes");
-    const response = await fetch(`https://b14e-203-210-84-203.ngrok-free.app/login`,{
-        method : 'POST',
+    const response = await axios.post(`${baseURL}/api/user/login`, {
+        email,
+        password,
+      }, {
         headers: {
-            'Content-Type': 'application/json',
-          },
-        body: JSON.stringify({ email, password }),
-    });
-    // const data = await response.json();
-    console.log(response);
+          'Content-Type': 'application/json',
+        },
+        withCredentials : true
+      });
+    
 
-    if (response.ok) {
-        try {
-          return response;
-        } catch (jsonError) {
-          console.error("Response is not JSON:", jsonError);
-          throw new Error("Invalid response from the server");
-        }
-      } else {
-        throw new Error("Request failed with status: " + response.status);
-      }
+    if (response.status === 200) {
+      console.log(response.data.msg);
+      return response.data;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
   } catch (error) {
     console.log(error);
     return error;
   }
 });
 
-// export const logoutAsync = createAsyncThunk('auth/logout', async () => {
-//   try {
-//     const response = await logoutAPI(); // Replace with your logout API call
+export const register = createAsyncThunk('auth/register',
+async ({ nama, email, password, confPassword  }: { nama: string, email: string; password: string, confPassword: string }) => {
+  
+  try {
+    const response = await axios.post(`${baseURL}/api/user/register`, {
+        nama,
+        email,
+        password,
+        confPassword
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    const responseData = response.data.data.user_id;
+    console.log(responseData);
+  } catch (error) {
+    return console.log(error);
+  }
+});
 
-//     if (response.ok) {
-//       return true;
-//     } else {
-//       throw new Error('Logout failed');
-//     }
-//   } catch (error) {
-//     throw error.message;
-//   }
-// });
+export const verifyOTP = createAsyncThunk('auth/login',
+async ({ otp }: { otp: string }) => {
+  try {
+    const response = await axios.post(`${baseURL}/api/otp/verify`, {
+      otp,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+        withCredentials : true
+    });
 
+    if (response.status === 200) {
+      return;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const logoutAsync = createAsyncThunk('auth/logout', async () => {
+  try {
+    await axios.delete(`${baseURL}/api/user/logout`,{withCredentials : true});
+    console.log("sip logout");
+  } catch (error) {
+    console.log("ini error");
+    throw error;
+  }
+});
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    email: '',
-    password: '',
-    accessToken: '',
-    isAuthenticated: false,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    loginStart: (state) => {
-      state.loading = true;
-    },
-    loginSuccess: (state, action) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.email = action.payload.email;
-        state.password = action.payload.password;
-        state.accessToken = action.payload.accessToken;
-        state.error = null;
-    },
-    loginFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.email = '';
-      state.password = '';
-      state.accessToken = '';
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+    .addCase(loginAsync.fulfilled, (state, action) => {
+      console.log("sampe sini");
+      state.data = action.payload.data;
+      state.error = action.payload.error;
+      state.msg = action.payload.msg;
+      console.log(action.payload.msg);
+    })
+    .addCase(loginAsync.rejected, (state, action) => {
+      state.error = "true";
+    })
   },
 });
-
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
 
 export default authSlice.reducer;
