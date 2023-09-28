@@ -31,8 +31,8 @@ class Register extends Component<any, RegisterState> {
         try {
             this.props //dispatch 
                 .register({ nama, email, password, confPassword })
-                .then(() => {
-                    this.props.router.navigate('/login');
+                .then((response: any) => {
+                    this.props.router.navigate('/verifyOTP');
                 })
                 .catch((error: any) => {
                     console.error(error);

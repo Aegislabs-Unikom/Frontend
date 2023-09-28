@@ -23,21 +23,18 @@ class Navbar extends Component<any, NavbarState> {
     }));
   };
 
-  logoutClicked = () => {
-    try {
-        this.props //dispatch 
-          .logoutAsync()
-          .then(() => {
-            // console.log("tes logout");
-            // localStorage.clear();
-            // this.props.router.navigate('/login');
-          })
-          .catch((error: any) => {
-            console.error(error);
-          });
-      } catch (error: any) {
-        console.error(error);
-      }
+  logoutClicked = async () => {
+        await this.props
+        .logoutAsync()
+        .then(() => {
+          localStorage.clear();
+          this.props.router.navigate('/login');
+        })
+        .catch((error:any) => {
+          console.log("Error caught in catch block:", error);
+          console.error("Error message:", error.message);
+        });
+      
   }
 
   render() {

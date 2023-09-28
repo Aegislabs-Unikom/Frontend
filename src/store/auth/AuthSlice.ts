@@ -26,16 +26,19 @@ const initialState: UserState = {
   msg: 'string',
 };
 
+const baseURL = 'https://aegisquest-ernafpm2wq-uc.a.run.app';
+
 export const loginAsync = createAsyncThunk('auth/login',
 async ({ email, password }: { email: string; password: string }) => {
   try {
-    const response = await axios.post(`https://bc34-103-172-116-212.ngrok-free.app/api/user/login`, {
+    const response = await axios.post(`${baseURL}/api/user/login`, {
         email,
         password,
       }, {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials : true
       });
     
 
@@ -53,9 +56,9 @@ async ({ email, password }: { email: string; password: string }) => {
 
 export const register = createAsyncThunk('auth/register',
 async ({ nama, email, password, confPassword  }: { nama: string, email: string; password: string, confPassword: string }) => {
+  
   try {
-    console.log("tes");
-    const response = await axios.post(`https://bc34-103-172-116-212.ngrok-free.app/api/user/register`, {
+    const response = await axios.post(`${baseURL}/api/user/register`, {
         nama,
         email,
         password,
@@ -65,19 +68,41 @@ async ({ nama, email, password, confPassword  }: { nama: string, email: string; 
           'Content-Type': 'application/json',
         },
       });
-    const responseData = response.data;
+    const responseData = response.data.data.user_id;
     console.log(responseData);
   } catch (error) {
     return console.log(error);
   }
 });
 
+export const verifyOTP = createAsyncThunk('auth/login',
+async ({ otp }: { otp: string }) => {
+  try {
+    const response = await axios.post(`${baseURL}/api/otp/verify`, {
+      otp,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+        withCredentials : true
+    });
+
+    if (response.status === 200) {
+      return;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error) {
+    throw error;
+  }
+});
+
 export const logoutAsync = createAsyncThunk('auth/logout', async () => {
   try {
-    await axios.delete(`https://bc34-103-172-116-212.ngrok-free.app/api/user/logout`);
+    await axios.delete(`${baseURL}/api/user/logout`,{withCredentials : true});
     console.log("sip logout");
-  } catch (error:any) {
-    console.error(error.message);
+  } catch (error) {
+    console.log("ini error");
     throw error;
   }
 });
