@@ -27,6 +27,7 @@ const initialState: UserState = {
 };
 
 const baseURL = 'https://aegisquest-ernafpm2wq-uc.a.run.app';
+// const baseURL = 'http://localhost:5000';
 
 export const loginAsync = createAsyncThunk('auth/login',
 async ({ email, password }: { email: string; password: string }) => {
@@ -88,12 +89,13 @@ async ({ otp }: { otp: string }) => {
     });
 
     if (response.status === 200) {
-      return;
+      console.log("berhasil verify");
     } else {
-      throw new Error("Request failed with status: " + response.status);
+      console.log(response.status);
+      //throw new Error("Request failed with status: " + response.status);
     }
   } catch (error) {
-    throw error;
+    return console.log(error);
   }
 });
 

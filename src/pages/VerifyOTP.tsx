@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { loginAsync } from "../store/auth/AuthSlice";
+import { verifyOTP } from "../store/auth/AuthSlice";
 import { withRouter } from "../helper/withRouter";
 import { Link } from "react-router-dom";
 
 interface verifState {
-  userId: string;
   otp: string;
 }
 
@@ -15,7 +14,6 @@ class VerifyOTP extends Component<any, verifState> {
       this.handleFormSubmit=this.handleFormSubmit.bind(this);
 
       this.state = {
-        userId: "",
         otp: ""
       };
     }
@@ -74,7 +72,7 @@ class VerifyOTP extends Component<any, verifState> {
 };
 
 const mapDispatchToProps = {
-    loginAsync, // Map the action to props
+  verifyOTP, // Map the action to props
 };
 
 const mapStateToProps = (state: any) => {

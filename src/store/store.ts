@@ -1,18 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/AuthSlice';
 import { loadState, saveState } from './localstorage';
+import ProductSlice from './product/ProductSlice';
 
 const persistedState = loadState();
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    products: ProductSlice,
   },
   preloadedState: persistedState
 });
 
 store.subscribe(() => {
   saveState({
-    auth: store.getState().auth
+    auth: store.getState().auth,
+    // products: store.getState().products
   });
 });
 
