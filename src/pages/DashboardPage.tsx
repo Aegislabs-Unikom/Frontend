@@ -34,6 +34,7 @@ class DashboardPage extends Component<any, State>{
 
     render(){
         const { dataProps } = this.props;
+
         return (
             <div className="text-gray-600 font-body">
                 <Navbar />
@@ -71,17 +72,21 @@ class DashboardPage extends Component<any, State>{
                 </Link>
                 {dataProps.data?.map((product:any) => {
                     return ( //buat komponen terpisah
-                    <div key={product.id} className="">
-                        <div className="max-w-sm w-full lg:max-w-full lg:flex m-5">
-                        <div className="ml-14 w-10/12  border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-                            <div className="mb-5">
-                            <p className="text-gray-700 text-base mt-5">{product.nama_produk}</p>
-                            <p className="text-gray-700 text-base mt-5">{product.description}</p>
-                            <p className="text-gray-700 text-base mt-5">{product.price} : {product.stock} pcs</p>
+                    <Link
+                    to={`/product/${product._id}`}
+                        key={product._id}>
+                        <div key={product.id} className="">
+                            <div className="max-w-sm w-full lg:max-w-full lg:flex m-5">
+                            <div className="ml-14 w-10/12  border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
+                                <div className="mb-5">
+                                <p className="text-gray-700 text-base mt-5">{product.nama_produk}</p>
+                                <p className="text-gray-700 text-base mt-5">{product.description}</p>
+                                <p className="text-gray-700 text-base mt-5">{product.price} : {product.stock} pcs</p>
+                                </div>
+                            </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
+                    </Link>
                     )
                 })}
             </div>

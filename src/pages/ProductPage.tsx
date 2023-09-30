@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addNewProduct } from "../store/product/ProductSlice";
+import { addNewProduct, getProductById } from "../store/product/ProductSlice";
 import { withRouter } from "../helper/withRouter";
-import { Link } from "react-router-dom";
 
 interface ProductState {
   nama_produk: string;
@@ -27,6 +26,29 @@ class ProductPage extends Component<any, ProductState> {
         category_id: "",
       };
     }
+    
+    componentDidMount() {
+      const { params } = this.props.router;
+      
+      if (params != null) {
+        try {
+          this.props
+            .getProductById(params)
+            .then(() => {
+              const { dataProps } = this.props;
+              const data = dataProps.data;
+              console.log("cek");
+              console.log(data);
+              // const { nama_produk, description, price, stock, image, category_id } = this.state;
+            })
+            .catch((error: any) => {
+              console.error(error);
+            });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
 
   handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +66,9 @@ class ProductPage extends Component<any, ProductState> {
   };
 
   render() {
+    const { dataProps } = this.props;
+    const data = dataProps.data;
+
     return (
         <section className="bg-gray-100">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -57,7 +82,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">Nama Produk</label>
                                 <input type="text"
                                     name="nama_produk"
-                                    value={this.state.nama_produk}
+                                    value={data.nama_produk}
                                     onChange={(e) => this.setState({ nama_produk: e.target.value })}
                                     className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
                             </div>
@@ -65,7 +90,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">description</label>
                                 <input type="text" 
                                     name="description" 
-                                    value={this.state.description}
+                                    value={data.description}
                                     onChange={(e) => this.setState({ description: e.target.value })}
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
@@ -73,7 +98,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">price</label>
                                 <input type="number" 
                                     name="price" 
-                                    value={this.state.price}
+                                    value={data.price}
                                     onChange={(e) => this.setState({ price: parseInt(e.target.value) })}
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
@@ -81,15 +106,15 @@ class ProductPage extends Component<any, ProductState> {
                             <label  className="block mb-2 text-sm font-medium text-gray-900 ">stok</label>
                                 <input type="number" 
                                     name="stok" 
-                                    value={this.state.stock}
+                                    value={data.stock}
                                     onChange={(e) => this.setState({ stock: parseInt(e.target.value) })}
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">image</label>
                                 <input type="file"
-                                  className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input"
-                                  name="image" 
+                                    className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input"
+                                    name="image" 
                                     value={this.state.image}
                                     onChange={(e) => this.setState({ image: e.target.value })}/>
                             </div>
@@ -97,7 +122,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">category_id</label>
                                 <input type="text" 
                                     name="category_id" 
-                                    value={this.state.category_id}
+                                    value={data.category_id}
                                     onChange={(e) => this.setState({ category_id: e.target.value })}
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
@@ -113,12 +138,13 @@ class ProductPage extends Component<any, ProductState> {
 };
 
 const mapDispatchToProps = {
-  addNewProduct, // Map the action to props
+  addNewProduct, getProductById// Map the action to props
 };
 
 const mapStateToProps = (state: any) => {
   return{
-    userData: state.auth
+    userData: state.auth,
+    dataProps: state.products
   }
 };
 

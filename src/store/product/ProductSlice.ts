@@ -41,12 +41,9 @@ export const getAllProducts = createAsyncThunk('product/getAllProduct', async ()
   });
 
 export const getProductById = createAsyncThunk('product/getProductById',
-async ({ email, password }: { email: string; password: string }) => {
+async ({ id }: { id: string}) => {
   try {
-    const response = await axios.post(`${baseURL}/api/user/login`, {
-        email,
-        password,
-      }, {
+    const response = await axios.get(`${baseURL}/api/products/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -152,6 +149,14 @@ const productSlice = createSlice({
       state.msg = action.payload.msg;
     })
     .addCase(getAllProducts.rejected, (state, action) => {
+      state.error = "true";
+    })
+    .addCase(getProductById.fulfilled, (state, action) => {
+      state.data = action.payload.data;
+      state.error = action.payload.error;
+      state.msg = action.payload.msg;
+    })
+    .addCase(getProductById.rejected, (state, action) => {
       state.error = "true";
     })
   },
