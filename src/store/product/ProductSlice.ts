@@ -23,6 +23,7 @@ const initialState: UserState = {
 };
 
 const baseURL = 'https://aegisquest-ernafpm2wq-uc.a.run.app';
+// const baseURL = 'http://localhost:5000';
 
 export const getAllProducts = createAsyncThunk('product/getAllProduct', async () => {
     try {
@@ -101,6 +102,44 @@ async ({ nama_category }: { nama_category: string }) => {
     console.log(responseData);
   } catch (error) {
     return console.log(error);
+  }
+});
+
+// export const deleteProduct = createAsyncThunk('product/deleteProduct',
+// async ({ productId }: { productId: string }) => {
+//   console.log(productId);
+//   try {
+//     console.log(productId);
+//     const response = await axios.delete(`${baseURL}/api/products/${productId}`, {withCredentials : true});
+//     const responseData = response.data.msg;
+//     console.log(responseData);
+
+//     if (response.status === 200) {
+//       console.log("bisa hapus");
+//     } else {
+//       throw new Error("Request failed with status: " + response.status);
+//     }
+//   } catch (error) {
+//     console.log("ini error");
+//     console.log(error);
+//   }
+// });
+
+export const deleteProduct = createAsyncThunk('product/deleteProduct',
+async ({ id }: { id: string}) => {
+  try {
+    console.log(id);
+    const response = await axios.delete(`${baseURL}/api/products/${id}`, {withCredentials : true});
+
+    if (response.status === 200) {
+      console.log(response.data.msg);
+      return response.data;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 });
 
