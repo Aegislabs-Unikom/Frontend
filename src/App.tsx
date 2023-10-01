@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import VerifyOTP from './pages/VerifyOTP';
 import ProductPage from './pages/ProductPage';
+import DetailPage from './pages/DetailPage';
 
 class App extends Component {
   render(){
@@ -14,6 +15,9 @@ class App extends Component {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/product">
+            <Route path=":id" element={<DetailPage />} />
+          </Route>
+          <Route path="/product-page">
             <Route path=":id" element={<ProductPage />} />
           </Route>
           <Route path="/" element={<DashboardPage />} />
