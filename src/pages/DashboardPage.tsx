@@ -71,7 +71,7 @@ class DashboardPage extends Component<any, State>{
                 <Navbar />
                 <div className="flex p-3">
                     <Link
-                        to={"/product"}
+                        to={"/product-page"}
                         className="m-3 lg:w-[15%] text-sm flex items-center w-[50%] px-5 py-2 font-bold text-white rounded-lg mb-8 lg:px-5 lg:py-2 md:text-base bg-blue-400 hover:opacity-80 hover:shadow-lg transition duration-500"
                     >
                         <span className="fill-current mr-3">

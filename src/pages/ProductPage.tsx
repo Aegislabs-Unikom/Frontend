@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { addNewProduct, getProductById } from "../store/product/ProductSlice";
 import { withRouter } from "../helper/withRouter";
+import Navbar from "../component/Navbar";
 
 interface ProductState {
   nama_produk: string;
@@ -27,28 +28,28 @@ class ProductPage extends Component<any, ProductState> {
       };
     }
     
-    componentDidMount() {
-      const { params } = this.props.router;
-      
-      if (params != null) {
-        try {
-          this.props
-            .getProductById(params)
-            .then(() => {
-              const { dataProps } = this.props;
-              const data = dataProps.data;
-              console.log("cek");
-              console.log(data);
-              // const { nama_produk, description, price, stock, image, category_id } = this.state;
-            })
-            .catch((error: any) => {
-              console.error(error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    }
+    // componentDidMount() {
+    //   const { params } = this.props.router;
+    //   console.log(params);
+    //   if (params != null) {
+    //     try {
+    //       this.props
+    //         .getProductById(params)
+    //         .then(() => {
+    //           const { dataProps } = this.props;
+    //           const data = dataProps.data;
+    //           console.log("cek");
+    //           console.log(data);
+    //           // const { nama_produk, description, price, stock, image, category_id } = this.state;
+    //         })
+    //         .catch((error: any) => {
+    //           console.error(error);
+    //         });
+    //     } catch (error) {
+    //       console.error(error);
+    //     }
+    //   }
+    // }
 
   handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +72,7 @@ class ProductPage extends Component<any, ProductState> {
 
     return (
         <section className="bg-gray-100">
+          <Navbar/>
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -82,7 +84,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">Nama Produk</label>
                                 <input type="text"
                                     name="nama_produk"
-                                    value={data.nama_produk}
+                                    value={this.state.nama_produk}
                                     onChange={(e) => this.setState({ nama_produk: e.target.value })}
                                     className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
                             </div>
@@ -122,7 +124,7 @@ class ProductPage extends Component<any, ProductState> {
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">category_id</label>
                                 <input type="text" 
                                     name="category_id" 
-                                    value={data.category_id}
+                                    value={this.state.category_id}
                                     onChange={(e) => this.setState({ category_id: e.target.value })}
                                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>

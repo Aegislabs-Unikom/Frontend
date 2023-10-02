@@ -80,6 +80,7 @@ async ({ nama_produk, description, price, stock, image, category_id  }: { nama_p
         },
         withCredentials : true
       });
+      console.log(response.data);
     const responseData = response.data.data.user_id;
     console.log(responseData);
   } catch (error) {
@@ -143,37 +144,6 @@ async ({ id }: { id: string}) => {
   }
 });
 
-export const verifyOTP = createAsyncThunk('auth/login',
-async ({ otp }: { otp: string }) => {
-  try {
-    const response = await axios.post(`${baseURL}/api/otp/verify`, {
-      otp,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        withCredentials : true
-    });
-
-    if (response.status === 200) {
-      return;
-    } else {
-      throw new Error("Request failed with status: " + response.status);
-    }
-  } catch (error) {
-    throw error;
-  }
-});
-
-export const logoutAsync = createAsyncThunk('auth/logout', async () => {
-  try {
-    await axios.delete(`${baseURL}/api/user/logout`,{withCredentials : true});
-    console.log("sip logout");
-  } catch (error) {
-    console.log("ini error");
-    throw error;
-  }
-});
 
 const productSlice = createSlice({
   name: 'auth',
