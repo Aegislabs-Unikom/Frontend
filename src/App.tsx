@@ -4,6 +4,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import VerifyOTP from './pages/VerifyOTP';
+import ProductPage from './pages/ProductPage';
+import DetailPage from './pages/DetailPage';
 
 class App extends Component {
   render(){
@@ -12,6 +14,12 @@ class App extends Component {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/product">
+            <Route path=":id" element={<DetailPage />} />
+          </Route>
+          <Route path="/product-page" element={<ProductPage />} />
+            {/* <Route path=":id" element={<ProductPage />} />
+          </Route> */}
           <Route path="/" element={<DashboardPage />} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
         </Routes>
