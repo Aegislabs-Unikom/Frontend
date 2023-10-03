@@ -31,7 +31,7 @@ class ProductPage extends Component<any, ProductState> {
     // componentDidMount() {
     //   const { params } = this.props.router;
     //   console.log(params);
-    //   if (params != null) {
+    //   if (params !== undefined) {
     //     try {
     //       this.props
     //         .getProductById(params)
@@ -58,6 +58,9 @@ class ProductPage extends Component<any, ProductState> {
       const { nama_produk, description, price, stock, image, category_id } = this.state;
       this.props //dispatch 
         .addNewProduct({ nama_produk, description, price, stock, image, category_id })
+        .then(()=> {
+          console.log(image);
+        })
         .catch((error: any) => {
           console.error(error);
         });
@@ -79,7 +82,7 @@ class ProductPage extends Component<any, ProductState> {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl ">
                             Add New Product
                         </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit}>
+                        <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit} >
                             <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">Nama Produk</label>
                                 <input type="text"
@@ -115,8 +118,8 @@ class ProductPage extends Component<any, ProductState> {
                             <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">image</label>
                                 <input type="file"
-                                    className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input"
-                                    name="image" 
+                                    className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400" id="images"
+                                    name="images" 
                                     value={this.state.image}
                                     onChange={(e) => this.setState({ image: e.target.value })}/>
                             </div>
