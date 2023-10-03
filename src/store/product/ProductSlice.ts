@@ -65,18 +65,26 @@ async ({ id }: { id: string}) => {
 });
 
 export const addNewProduct = createAsyncThunk('product/addNewProduct',
-async ({ nama_produk, description, price, stock, image, category_id  }: { nama_produk: string, description: string, price: number, stock: number, image: string, category_id: string }) => {
+async ({ nama_produk, description, price, stock, images, category_id  }: { nama_produk: string, description: string, price: number, stock: number, images: string, category_id: string }) => {
   try {
+    // var bodyFormData = new FormData();
+    // bodyFormData.append('nama_produk', nama_produk);
+    // bodyFormData.append('description', description);
+    // bodyFormData.append('price', price);
+    // bodyFormData.append('stock', stock);
+    // bodyFormData.append('image', image);
+    // bodyFormData.append('category_id', category_id);
+    
     const response = await axios.post(`${baseURL}/api/products`, {
         nama_produk, 
         description, 
         price, 
         stock, 
-        image, 
+        images, 
         category_id
       }, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data'
         },
         withCredentials : true
       });

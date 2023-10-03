@@ -56,18 +56,21 @@ async ({ email, password }: { email: string; password: string }) => {
 });
 
 export const register = createAsyncThunk('auth/register',
-async ({ nama, email, password, confPassword  }: { nama: string, email: string; password: string, confPassword: string }) => {
+async ({ nama, email, alamat, no_hp, password, confPassword  }: { nama: string, email: string, alamat: string, no_hp: string, password: string, confPassword: string }) => {
   
   try {
     const response = await axios.post(`${baseURL}/api/user/register`, {
         nama,
         email,
+        alamat,
+        no_hp,
         password,
         confPassword
       }, {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials : true
       });
     const responseData = response.data.data.user_id;
     console.log(responseData);
@@ -76,7 +79,7 @@ async ({ nama, email, password, confPassword  }: { nama: string, email: string; 
   }
 });
 
-export const verifyOTP = createAsyncThunk('auth/login',
+export const verifyOTP = createAsyncThunk('auth/verify',
 async ({ otp }: { otp: string }) => {
   try {
     const response = await axios.post(`${baseURL}/api/otp/verify`, {
@@ -87,9 +90,11 @@ async ({ otp }: { otp: string }) => {
       },
         withCredentials : true
     });
+    console.log(response.status);
 
     if (response.status === 200) {
       console.log("berhasil verify");
+      return;
     } else {
       console.log(response.status);
       //throw new Error("Request failed with status: " + response.status);
