@@ -27,7 +27,7 @@ class DetailPage extends Component<any, ProductState> {
         category_id: "",
       };
     }
-    
+
     componentDidMount() {
       const { params } = this.props.router;
       
@@ -36,10 +36,11 @@ class DetailPage extends Component<any, ProductState> {
           this.props
             .getProductById(params)
             .then(() => {
-              const { dataProps } = this.props;
-              const data = dataProps.data;
-              console.log("cek");
-              console.log(data);
+              // this.dataProps = this.props;
+              // const { dataProps } = this.props;
+              // const data = dataProps.data;
+              // console.log("cek");
+              // console.log(data);
               // const { nama_produk, description, price, stock, image, category_id } = this.state;
             })
             .catch((error: any) => {
@@ -56,7 +57,7 @@ class DetailPage extends Component<any, ProductState> {
   
     try {
       const { nama_produk, description, price, stock, image, category_id } = this.state;
-      this.props //dispatch 
+      await this.props //dispatch 
         .addNewProduct({ nama_produk, description, price, stock, image, category_id })
         .catch((error: any) => {
           console.error(error);
@@ -69,6 +70,7 @@ class DetailPage extends Component<any, ProductState> {
   render() {
     const { dataProps } = this.props;
     const data = dataProps.data;
+    // const data = this.dataProps.data;
 
     return (
         <section className="text-gray-700 body-font overflow-hidden bg-white">

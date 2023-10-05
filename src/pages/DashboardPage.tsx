@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
+import { withRouter } from "../helper/withRouter";
 
 type Products = {
     id: string;
@@ -47,6 +48,9 @@ class DashboardPage extends Component<any, State>{
         //   console.log(params);       
         });
     }
+    editProductById = async (productId: string) => {
+        this.props.router.navigate(`/product-page/${productId}`);
+    }
 
     deleteProductById = async (productId: string) => {
         const confirm = window.confirm('Delete this product?');
@@ -65,6 +69,7 @@ class DashboardPage extends Component<any, State>{
 
     render(){
        const { dataProps } = this.props;
+       const data = dataProps.data;
 
         return (
             <div className="text-gray-600 font-body">
@@ -105,7 +110,7 @@ class DashboardPage extends Component<any, State>{
                 </div>
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                        {dataProps.data?.map((product:any) => {
+                        {data?.map((product:any) => {
                             return ( //buat komponen terpisah
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
@@ -121,7 +126,7 @@ class DashboardPage extends Component<any, State>{
                                         <div className="flex">
                                             <button
                                                 className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
-                                                // onClick={() => editProductById(product._id)}
+                                                onClick={() => this.editProductById(product._id)}
                                                 > edit
                                             </button>
                                             <button
@@ -152,4 +157,4 @@ const mapStateToProps = (state: any) => ({
     deleteProduct
   };
 
-export default connect(mapStateToProps,mapDispatchToProps)(DashboardPage);
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(DashboardPage));

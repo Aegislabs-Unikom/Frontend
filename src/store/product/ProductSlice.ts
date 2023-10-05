@@ -58,8 +58,8 @@ async ({ id }: { id: string}) => {
     } else {
       throw new Error("Request failed with status: " + response.status);
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error:any) {
+    console.log(error.response.data.msg);
     return error;
   }
 });
@@ -67,72 +67,63 @@ async ({ id }: { id: string}) => {
 export const addNewProduct = createAsyncThunk('product/addNewProduct',
 async ({ nama_produk, description, price, stock, images, category_id  }: { nama_produk: string, description: string, price: number, stock: number, images: string, category_id: string }) => {
   try {
-    // var bodyFormData = new FormData();
-    // bodyFormData.append('nama_produk', nama_produk);
-    // bodyFormData.append('description', description);
-    // bodyFormData.append('price', price);
-    // bodyFormData.append('stock', stock);
-    // bodyFormData.append('image', image);
-    // bodyFormData.append('category_id', category_id);
-    
-    const response = await axios.post(`${baseURL}/api/products`, {
-        nama_produk, 
-        description, 
-        price, 
-        stock, 
-        images, 
-        category_id
-      }, {
+    const formData = new FormData();
+    console.log(images[0]);
+    formData.append("images", images[0]);
+    formData.append("nama_produk", nama_produk);
+    formData.append("description", description);
+    formData.append("price", price.toString());
+    formData.append("stock", stock.toString());
+    formData.append("category_id", category_id);
+
+    const response = await axios.post(`${baseURL}/api/products`, 
+      formData, 
+      {
+        withCredentials : true,
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
         },
-        withCredentials : true
-      });
-      console.log(response.data);
-    const responseData = response.data.data.user_id;
-    console.log(responseData);
+    });
+    
+    console.log(response.data.msg);
+    return response.data;
   } catch (error) {
     return console.log(error);
   }
 });
 
-export const addNewCategory = createAsyncThunk('product/addNewCategory',
-async ({ nama_category }: { nama_category: string }) => {
+export const updateProduct = createAsyncThunk('product/updateProduct',
+async ({ nama_produk, description, price, stock, images, category_id, id }: { nama_produk: string, description: string, price: number, stock: number, images: string, category_id: string, id: string }) => {
   try {
-    const response = await axios.post(`${baseURL}/api/category`, {
-        nama_category,
-      }, {
+    // const formData = new FormData();
+    // console.log(images[0]);
+    // formData.append("images", images[0]);
+    // formData.append("nama_produk", nama_produk);
+    // formData.append("description", description);
+    // formData.append("price", price.toString());
+    // formData.append("stock", stock.toString());
+    // formData.append("category_id", category_id);
+
+    const response = await axios.put(`${baseURL}/api/products/${id}`, {
+        nama_produk,
+        description,
+        price,
+        stock
+      }, 
+      {
+        withCredentials : true,
         headers: {
+          // 'Content-Type': 'multipart/form-data',
           'Content-Type': 'application/json',
         },
-        withCredentials : true
-      });
-    const responseData = response.data.msg;
-    console.log(responseData);
+    });
+    
+    console.log(response.data.msg);
+    return response.data;
   } catch (error) {
     return console.log(error);
   }
 });
-
-// export const deleteProduct = createAsyncThunk('product/deleteProduct',
-// async ({ productId }: { productId: string }) => {
-//   console.log(productId);
-//   try {
-//     console.log(productId);
-//     const response = await axios.delete(`${baseURL}/api/products/${productId}`, {withCredentials : true});
-//     const responseData = response.data.msg;
-//     console.log(responseData);
-
-//     if (response.status === 200) {
-//       console.log("bisa hapus");
-//     } else {
-//       throw new Error("Request failed with status: " + response.status);
-//     }
-//   } catch (error) {
-//     console.log("ini error");
-//     console.log(error);
-//   }
-// });
 
 export const deleteProduct = createAsyncThunk('product/deleteProduct',
 async ({ id }: { id: string}) => {
