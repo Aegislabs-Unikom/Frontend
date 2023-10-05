@@ -17,9 +17,9 @@ class App extends Component {
           <Route path="/product">
             <Route path=":id" element={<DetailPage />} />
           </Route>
-          <Route path="/product-page" element={<ProductPage />} />
-            {/* <Route path=":id" element={<ProductPage />} />
-          </Route> */}
+          <Route path="/product-page" element={<ProductPage />} >
+            <Route path=":id" element={<ProductPage />} />
+          </Route>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
         </Routes>

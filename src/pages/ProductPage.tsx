@@ -1,6 +1,7 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import { connect } from "react-redux";
-import { addNewProduct, getAllCategory } from "../store/product/ProductSlice";
+import { addNewProduct, getProductById } from "../store/product/ProductSlice";
+import { getAllCategory } from "../store/category/CategorySlice";
 import { withRouter } from "../helper/withRouter";
 import Navbar from "../component/Navbar";
 
@@ -28,22 +29,34 @@ class ProductPage extends Component<any, ProductState> {
   }
 
   params = "";
+  dataProduct = {};
+  dataCategory = {};
 
   componentDidMount() {
-    const { params } = this.props.router;
-    console.log(Object.keys(params).length === 0);
+    this.params = this.props.router.params;
+    console.log(Object.keys(this.params).length === 0);
       
-      if (Object.keys(params).length !== 0) {
+      if (Object.keys(this.params).length !== 0) {
         try {
           this.props
-            .getProductById(params)
+            .getProductById(this.params)
             .then(() => {
               // this.dataProps = this.props;
-              // const { dataProps } = this.props;
-              // const data = dataProps.data;
-              // console.log("cek");
-              // console.log(data);
-              // const { nama_produk, description, price, stock, image, category_id } = this.state;
+              const { dataProps } = this.props;
+              const data = dataProps.data;
+              // this.dataProduct = this.props.dataProps.data;
+              // console.log(this.dataProduct);
+              // const data = dataProduct.data;
+              this.setState({ 
+                nama_produk: data.nama_produk,
+                description: data.description,
+                price: data.price,
+                stock: data.stock,
+                images: data.images,
+                category_id: data.category_id,
+               })
+               console.log(this.state.images)
+              this.getAllCategory();
             })
             .catch((error: any) => {
               console.error(error);
@@ -52,15 +65,16 @@ class ProductPage extends Component<any, ProductState> {
           console.error(error);
         }
       } else {
-        try {
+        this.getAllCategory();
+      }
+  }
+
+  getAllCategory = () => {
+    try {
           this.props
             .getAllCategory()
             .then(() => {
-              // const { dataProps } = this.props;
-              // const data = dataProps.data;
-              // console.log("cek");
-              // console.log(data);
-              // const { nama_produk, description, price, stock, image, category_id } = this.state;
+              this.dataCategory = this.props;
             })
             .catch((error: any) => {
               console.error(error);
@@ -68,7 +82,6 @@ class ProductPage extends Component<any, ProductState> {
         } catch (error) {
           console.error(error);
         }
-      }
   }
 
   handleFormSubmit = async (e: FormEvent) => {
@@ -102,8 +115,11 @@ class ProductPage extends Component<any, ProductState> {
   };
 
   render() {
-    const { dataProps } = this.props;
-    const data = dataProps.data;
+    // const { dataProps } = this.props;
+    // const data = dataProps.data;
+
+    const { dataCategory } = this.props;
+    const category = dataCategory.data;
 
     return (
       <section className="bg-gray-100">
@@ -112,7 +128,7 @@ class ProductPage extends Component<any, ProductState> {
           <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl">
-                Add New Product
+                {this.params? "Update" : "Add New "} Product
               </h1>
               <form
                 className="space-y-4 md:space-y-6"
@@ -188,13 +204,14 @@ class ProductPage extends Component<any, ProductState> {
                     className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="images"
                     name="images"
+                    // value={this.state.images}
                     multiple
                     onChange={this.handleImageChange}
                   />
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Category ID
+                    Category
                   </label>
                   <select name="category" 
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-300 dark:placeholder-white-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -202,7 +219,7 @@ class ProductPage extends Component<any, ProductState> {
                       value={this.state.category_id}
                       onChange={(e) => this.setState({ category_id: e.target.value })}
                     >
-                    {dataProps.data?.map((category:any) => {
+                    {category?.map((category:any) => {
                       return (
                         <option value={category._id} key={category._id}>{category.nama_category}</option>)
                     })}
@@ -212,7 +229,7 @@ class ProductPage extends Component<any, ProductState> {
                   type="submit"
                   className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500"
                 >
-                  Tambah produk
+                  {this.params? "Update" : "Add New "} produk
                 </button>
               </form>
             </div>
@@ -225,12 +242,14 @@ class ProductPage extends Component<any, ProductState> {
 
 const mapDispatchToProps = {
   addNewProduct,
-  getAllCategory
+  getAllCategory,
+  getProductById
 };
 
 const mapStateToProps = (state: any) => {
   return{
-    dataProps: state.products
+    dataProps: state.products,
+    dataCategory: state.category
   }
 };
 
