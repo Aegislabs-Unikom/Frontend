@@ -65,6 +65,7 @@ class DashboardPage extends Component<any, State>{
 
     render(){
        const { dataProps } = this.props;
+       const data = dataProps.data;
 
         return (
             <div className="text-gray-600 font-body">
@@ -105,7 +106,7 @@ class DashboardPage extends Component<any, State>{
                 </div>
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                        {dataProps.data?.map((product:any) => {
+                        {data?.map((product:any) => {
                             return ( //buat komponen terpisah
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
