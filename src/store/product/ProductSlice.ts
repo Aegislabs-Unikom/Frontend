@@ -92,35 +92,34 @@ async ({ nama_produk, description, price, stock, images, category_id  }: { nama_
   }
 });
 
-export const getAllCategory = createAsyncThunk('product/getAllCategory', async () => {
+export const updateProduct = createAsyncThunk('product/updateProduct',
+async ({ nama_produk, description, price, stock, images, category_id, id }: { nama_produk: string, description: string, price: number, stock: number, images: string, category_id: string, id: string }) => {
   try {
-      const response = await axios.get(`${baseURL}/api/category`,{withCredentials : true});
+    // const formData = new FormData();
+    // console.log(images[0]);
+    // formData.append("images", images[0]);
+    // formData.append("nama_produk", nama_produk);
+    // formData.append("description", description);
+    // formData.append("price", price.toString());
+    // formData.append("stock", stock.toString());
+    // formData.append("category_id", category_id);
 
-      if (response.status === 200) {
-          console.log(response.data.data);
-          return response.data;
-      } else {
-          throw new Error("Request failed with status: " + response.status);
-      }
-  } catch (error) {
-    console.log("ini error");
-    throw error;
-  }
-});
-
-export const addNewCategory = createAsyncThunk('product/addNewCategory',
-async ({ nama_category }: { nama_category: string }) => {
-  try {
-    const response = await axios.post(`${baseURL}/api/category`, {
-        nama_category,
-      }, {
+    const response = await axios.put(`${baseURL}/api/products/${id}`, {
+        nama_produk,
+        description,
+        price,
+        stock
+      }, 
+      {
+        withCredentials : true,
         headers: {
+          // 'Content-Type': 'multipart/form-data',
           'Content-Type': 'application/json',
         },
-        withCredentials : true
-      });
-    const responseData = response.data.msg;
-    console.log(responseData);
+    });
+    
+    console.log(response.data.msg);
+    return response.data;
   } catch (error) {
     return console.log(error);
   }
@@ -166,14 +165,6 @@ const productSlice = createSlice({
       state.msg = action.payload.msg;
     })
     .addCase(getProductById.rejected, (state, action) => {
-      state.error = "true";
-    })
-    .addCase(getAllCategory.fulfilled, (state, action) => {
-      state.data = action.payload.data;
-      state.error = action.payload.error;
-      state.msg = action.payload.msg;
-    })
-    .addCase(getAllCategory.rejected, (state, action) => {
       state.error = "true";
     })
   },

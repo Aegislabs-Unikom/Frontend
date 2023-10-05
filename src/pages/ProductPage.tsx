@@ -1,6 +1,6 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import { connect } from "react-redux";
-import { addNewProduct, getProductById } from "../store/product/ProductSlice";
+import { addNewProduct, getProductById, updateProduct } from "../store/product/ProductSlice";
 import { getAllCategory } from "../store/category/CategorySlice";
 import { withRouter } from "../helper/withRouter";
 import Navbar from "../component/Navbar";
@@ -31,12 +31,15 @@ class ProductPage extends Component<any, ProductState> {
   params = "";
   dataProduct = {};
   dataCategory = {};
+  hasParams = false;
+  
 
   componentDidMount() {
     this.params = this.props.router.params;
-    console.log(Object.keys(this.params).length === 0);
+    this.hasParams = Object.keys(this.params).length > 0;
+    console.log(this.hasParams);
       
-      if (Object.keys(this.params).length !== 0) {
+      if (this.hasParams) {
         try {
           this.props
             .getProductById(this.params)
@@ -84,9 +87,19 @@ class ProductPage extends Component<any, ProductState> {
         }
   }
 
-  handleFormSubmit = async (e: FormEvent) => {
+  handleFormSubmit = (e: FormEvent) => {
+    if (this.hasParams) {
+      console.log(this.hasParams);
+      this.updateProduct(e);
+    } else {
+      console.log(this.hasParams);
+      this.addNewProduct(e);
+    }
+  };
+
+  addNewProduct = async (e: FormEvent) => {
     e.preventDefault();
-  
+    console.log("tambah");
     try {
       const { nama_produk, description, price, stock, images, category_id } = this.state;
       this.props //dispatch 
@@ -105,7 +118,34 @@ class ProductPage extends Component<any, ProductState> {
     } catch (error) {
       console.error(error);
     }
-  };
+  }
+
+  updateProduct = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log("update");
+    try {
+      const objectId = this.params;
+      const id = Object.values(objectId);
+      const { nama_produk, description, price, stock, images, category_id } = this.state;
+      console.log(id);
+      this.props //dispatch 
+        .updateProduct({ nama_produk, description, price, stock, images, category_id, id })
+        .then((params: any) => { // Use an arrow function here
+          this.params = params.payload.data._id;
+          // console.log("ini params");
+          // console.log(this.params);
+          console.log(this.params);       
+          // console.log(params.payload.data);     
+          this.props.router.navigate(`/product/${params.payload.data._id}`);
+        })
+        .catch((error: any) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
 
   handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -128,7 +168,7 @@ class ProductPage extends Component<any, ProductState> {
           <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl">
-                {this.params? "Update" : "Add New "} Product
+                {this.hasParams? "Update" : "Add New "} Product
               </h1>
               <form
                 className="space-y-4 md:space-y-6"
@@ -229,7 +269,7 @@ class ProductPage extends Component<any, ProductState> {
                   type="submit"
                   className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500"
                 >
-                  {this.params? "Update" : "Add New "} produk
+                  {this.hasParams? "Update" : "Add New "} produk
                 </button>
               </form>
             </div>
@@ -243,7 +283,8 @@ class ProductPage extends Component<any, ProductState> {
 const mapDispatchToProps = {
   addNewProduct,
   getAllCategory,
-  getProductById
+  getProductById,
+  updateProduct
 };
 
 const mapStateToProps = (state: any) => {

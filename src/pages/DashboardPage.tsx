@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
+import { withRouter } from "../helper/withRouter";
 
 type Products = {
     id: string;
@@ -46,6 +47,9 @@ class DashboardPage extends Component<any, State>{
         .then(function name(params: any) {
         //   console.log(params);       
         });
+    }
+    editProductById = async (productId: string) => {
+        this.props.router.navigate(`/product-page/${productId}`);
     }
 
     deleteProductById = async (productId: string) => {
@@ -122,7 +126,7 @@ class DashboardPage extends Component<any, State>{
                                         <div className="flex">
                                             <button
                                                 className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
-                                                // onClick={() => editProductById(product._id)}
+                                                onClick={() => this.editProductById(product._id)}
                                                 > edit
                                             </button>
                                             <button
@@ -153,4 +157,4 @@ const mapStateToProps = (state: any) => ({
     deleteProduct
   };
 
-export default connect(mapStateToProps,mapDispatchToProps)(DashboardPage);
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(DashboardPage));
