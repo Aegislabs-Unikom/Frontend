@@ -108,7 +108,9 @@ async ({ nama_produk, description, price, stock, images, category_id, id }: { na
         nama_produk,
         description,
         price,
-        stock
+        stock,
+        // images,
+        category_id
       }, 
       {
         withCredentials : true,
@@ -143,6 +145,30 @@ async ({ id }: { id: string}) => {
   }
 });
 
+export const addToCart = createAsyncThunk('product/addToCart',
+async ({ quantity, id }: { quantity: number, id: string}) => {
+  try {
+    console.log(id);
+    const response = await axios.post(`${baseURL}/api/cart/${id}`, 
+    quantity, 
+    {
+      withCredentials : true,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+  });
+
+    if (response.status === 200) {
+      console.log(response.data.msg);
+      return response.data;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+});
 
 const productSlice = createSlice({
   name: 'auth',
