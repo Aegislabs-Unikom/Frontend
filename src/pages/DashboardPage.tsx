@@ -69,42 +69,6 @@ class DashboardPage extends Component<any, State>{
         
     }
 
-    checkOut = async (id: string) => { //test
-        if (this.state.quantity === 0) {
-          alert("barang kosong");
-          return;
-        } //to get id from params
-        try {
-          const { quantity } = this.state;
-          await this.props
-            .addToCart({ id, quantity })
-            .then(
-                console.log("berhasil")
-            )
-            .catch((error: any) => {
-              console.error(error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-    };
-
-    onclick(type: any){ //test
-        this.setState(prevState => {
-          if (prevState.quantity === 0 && type === 'add') {
-            return {quantity: prevState.quantity + 1};
-          } else if (prevState.quantity > 0 ){
-            return {quantity: type === 'add' ? prevState.quantity + 1: prevState.quantity - 1}
-          }
-          return null;
-        });
-      }
-
-    handleCheckoutClick = (id: string) => { //test
-        this.checkOut(id);
-    };
-
-
     render(){
         const { dataProps } = this.props;
         const data = dataProps.data;
