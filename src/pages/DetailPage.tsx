@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addNewProduct, getProductById } from "../store/product/ProductSlice";
+import { addNewProduct, getProductById, addToCart } from "../store/product/ProductSlice";
 import { withRouter } from "../helper/withRouter";
 import Navbar from "../component/Navbar";
 
@@ -11,12 +11,13 @@ interface ProductState {
   stock: number; 
   image: string; 
   category_id: string;
+  quantity: number;
 }
 
 class DetailPage extends Component<any, ProductState> {
     constructor(props: {}) {
       super(props);
-      this.handleFormSubmit=this.handleFormSubmit.bind(this);
+      this.checkOut=this.checkOut.bind(this);
 
       this.state = {
         nama_produk: "",
@@ -25,16 +26,19 @@ class DetailPage extends Component<any, ProductState> {
         stock: 0,
         image: "",
         category_id: "",
+        quantity: 0
       };
     }
 
+    params = ""; //biar bisa dibaca dalam 1 variabel
+
     componentDidMount() {
-      const { params } = this.props.router;
+      this.params = this.props.router.params;
       
-      if (params != null) {
+      if (this.params != null) {
         try {
           this.props
-            .getProductById(params)
+            .getProductById(this.params)
             .then(() => {
               // this.dataProps = this.props;
               // const { dataProps } = this.props;
@@ -52,13 +56,17 @@ class DetailPage extends Component<any, ProductState> {
       }
     }
 
-  handleFormSubmit = async (e: React.FormEvent) => {
+  checkOut = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+    if (this.state.quantity === 0) {
+      alert("barang kosong");
+      return;
+    }
+    const id = Object.values(this.params); //to get id from params
     try {
-      const { nama_produk, description, price, stock, image, category_id } = this.state;
-      await this.props //dispatch 
-        .addNewProduct({ nama_produk, description, price, stock, image, category_id })
+      const { quantity } = this.state;
+      await this.props
+        .addToCart({ id, quantity })
         .catch((error: any) => {
           console.error(error);
         });
@@ -66,6 +74,17 @@ class DetailPage extends Component<any, ProductState> {
       console.error(error);
     }
   };
+
+  onclick(type: any){
+    this.setState(prevState => {
+      if (prevState.quantity === 0 && type === 'add') {
+        return {quantity: prevState.quantity + 1};
+      } else if (prevState.quantity > 0 ){
+        return {quantity: type === 'add' ? prevState.quantity + 1: prevState.quantity - 1}
+      }
+      return null;
+    });
+  }
 
   render() {
     const { dataProps } = this.props;
@@ -125,9 +144,14 @@ class DetailPage extends Component<any, ProductState> {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex">
-                            <span className="title-font font-medium text-2xl text-gray-900">{data.price}</span>
-                            <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"></button>
+                        <span className="title-font font-medium text-2xl text-gray-900">{data.price}</span>
+                        <div className="flex border-gray-200">
+                            <div className="flex">
+                              <button onClick={this.onclick.bind(this, 'add')} className="mr-2">+</button>
+                                <input type="text" disabled value={this.state.quantity} className="w-6 text-center"/>
+                              <button onClick={this.onclick.bind(this, 'sub')} className="ml-2">-</button>
+                            </div>
+                            <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded" onClick={this.checkOut}>Checkout</button>
                             <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                                 <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-5 h-5" viewBox="0 0 24 24">
                                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
@@ -143,7 +167,7 @@ class DetailPage extends Component<any, ProductState> {
 };
 
 const mapDispatchToProps = {
-  addNewProduct, getProductById// Map the action to props
+  addNewProduct, getProductById, addToCart// Map the action to props
 };
 
 const mapStateToProps = (state: any) => {

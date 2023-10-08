@@ -2,7 +2,8 @@ import Navbar from "../component/Navbar";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
-import { getAllProducts, deleteProduct, addToCart } from "../store/product/ProductSlice";
+import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
+import { addToCart, getAllCart } from "../store/cart/CartSlice";
 import { withRouter } from "../helper/withRouter";
 
 type Products = {
@@ -18,13 +19,13 @@ type Products = {
     quantity: number; //test
   };
 
-class DashboardPage extends Component<any, State>{
+class CartPage extends Component<any, State>{
     constructor(props: {}) {
         super(props);
     
         this.state = {
             productsData: [],
-            quantity:0 //test
+            quantity: 0 //test
         };
     }
     
@@ -43,9 +44,9 @@ class DashboardPage extends Component<any, State>{
     //         this.getData();
     //       }
     // }
-    
+    count = 0;
     getData = async () => {
-        this.props.getAllProducts()
+        this.props.getAllCart()
         .then(function name(params: any) {
         //   console.log(params);       
         });
@@ -69,10 +70,54 @@ class DashboardPage extends Component<any, State>{
         
     }
 
+    checkOut = async (id: string) => { //mau diganti
+        if (this.state.quantity === 0) {
+          alert("barang kosong");
+          return;
+        } 
+        try {
+          const { quantity } = this.state;
+          await this.props
+            .addToCart({ id, quantity })
+            .then(
+                console.log("berhasil")
+            )
+            .catch((error: any) => {
+              console.error(error);
+            });
+        } catch (error) {
+          console.error(error);
+        }
+    };
+
+    onclick(type: any, quantity: number){ //test
+        console.log(quantity);
+        if (quantity === 0 && type === 'add') {
+            quantity =+ 1;
+          } else if (quantity > 0 ){
+            console.log("tambah");
+            (type === 'add' ? quantity =+ 1 : quantity =- 1 )
+          }
+        // this.setState(prevProps => {
+        //   if (prevProps.quantity === 0 && type === 'add') {
+        //     return {quantity: prevProps.quantity + 1};
+        //   } else if (prevProps.quantity > 0 ){
+        //     console.log("tambah");
+        //     console.log(prevProps.quantity);
+        //     return {quantity: type === 'add' ? prevProps.quantity + 1: prevProps.quantity - 1}
+        //   }
+        //   return null;
+        // });
+      }
+
+    handleCheckoutClick = (id: string) => { //test
+        this.checkOut(id);
+    };
+
+
     render(){
-        const { dataProps } = this.props;
-        const data = dataProps.data;
-        // console.log(dataProps)
+        const { cartProps } = this.props;
+        const data = cartProps.data;
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
@@ -121,33 +166,42 @@ class DashboardPage extends Component<any, State>{
                     )}
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                        {data?.map((product:any) => {
+                        {data?.map((cart:any) => {
                             return ( //buat komponen terpisah
-                            <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
+                            <div key={cart.product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
                                         <Link
-                                            to={`/product/${product._id}`}>
+                                            to={`/product/${cart.product._id}`}>
                                             <div className="mb-3">
-                                                <img src={product.image} alt="" className="max-h-56 m-auto"/>
-                                                <p className="text-gray-700 text-base mt-2">{product.nama_produk}</p>
-                                                <p className="text-gray-700 text-base mt-1">{product.description}</p>
-                                                <p className="text-gray-700 text-base">{product.price} : {product.stock} pcs</p>
+                                                <img src={cart.product.image} alt="" className="max-h-56 m-auto"/>
+                                                <p className="text-gray-700 text-base mt-2">{cart.product.nama_produk}</p>
+                                                <p className="text-gray-700 text-base mt-1">{cart.product.description}</p>
+                                                <p className="text-gray-700 text-base">{cart.product.price} pcs</p>
+                                                <p className="text-gray-700 text-base">{cart.quantity}</p>
                                             </div>
                                         </Link>
                                         {isAdmin ? (
                                         <div className="flex">
                                             <button
                                                 className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
-                                                onClick={() => this.editProductById(product._id)}
+                                                onClick={() => this.editProductById(cart.product._id)}
                                                 > edit
                                             </button>
                                             <button
                                                 className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/3 h-9 p-2"
-                                                onClick={() => this.deleteProductById(product._id)}>delete
+                                                onClick={() => this.deleteProductById(cart.product._id)}>delete
                                             </button>
                                         </div>
                                         ):(
                                             <div className="mb-5">
+                                                <div className="flex border-gray-200">
+                                                    {/* <div className="flex"> //tambah dan kurang
+                                                        <button onClick={this.onclick.bind(this, 'add',cart.quantity )} className="mr-2">+</button>
+                                                            <input type="text" disabled value={this.count = cart.quantity} onChange={(e) => this.setState({ quantity: parseInt(e.target.value) })} className="w-6 text-center"/>
+                                                        <button onClick={this.onclick.bind(this, 'sub', cart.quantity)} className="ml-2">-</button>
+                                                    </div> */}
+                                                    <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-2 focus:outline-none hover:bg-red-600 rounded" onClick={() => this.handleCheckoutClick(cart._id)}>Checkout</button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -164,13 +218,15 @@ class DashboardPage extends Component<any, State>{
 
 const mapStateToProps = (state: any) => ({
     userProps: state.auth,
-    dataProps: state.products
+    dataProps: state.products,
+    cartProps: state.cart
   });
   
   const mapDispatchToProps = {
     getAllProducts, 
     deleteProduct,
-    addToCart
+    addToCart,
+    getAllCart
   };
 
-export default connect(mapStateToProps,mapDispatchToProps)(withRouter(DashboardPage));
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(CartPage));

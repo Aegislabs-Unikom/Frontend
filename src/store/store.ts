@@ -3,13 +3,15 @@ import authReducer from './auth/AuthSlice';
 import { loadState, saveState } from './localstorage';
 import ProductSlice from './product/ProductSlice';
 import CategorySlice from './category/CategorySlice';
+import CartSlice from './cart/CartSlice';
 
 const persistedState = loadState();
 const store = configureStore({
   reducer: {
     auth: authReducer,
     products: ProductSlice,
-    category: CategorySlice
+    category: CategorySlice,
+    cart: CartSlice
   },
   preloadedState: persistedState
 });

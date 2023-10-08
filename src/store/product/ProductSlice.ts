@@ -35,9 +35,9 @@ export const getAllProducts = createAsyncThunk('product/getAllProduct', async ()
         } else {
             throw new Error("Request failed with status: " + response.status);
         }
-    } catch (error) {
+    } catch (error: any) {
       console.log("ini error");
-      throw error;
+      throw error.response;
     }
   });
 
@@ -87,8 +87,8 @@ async ({ nama_produk, description, price, stock, images, category_id  }: { nama_
     
     console.log(response.data.msg);
     return response.data;
-  } catch (error) {
-    return console.log(error);
+  } catch (error: any) {
+    return console.log(error.response);
   }
 });
 
@@ -108,7 +108,9 @@ async ({ nama_produk, description, price, stock, images, category_id, id }: { na
         nama_produk,
         description,
         price,
-        stock
+        stock,
+        // images,
+        category_id
       }, 
       {
         withCredentials : true,
@@ -120,8 +122,8 @@ async ({ nama_produk, description, price, stock, images, category_id, id }: { na
     
     console.log(response.data.msg);
     return response.data;
-  } catch (error) {
-    return console.log(error);
+  } catch (error:any) {
+    return console.log(error.response);
   }
 });
 
@@ -137,12 +139,53 @@ async ({ id }: { id: string}) => {
     } else {
       throw new Error("Request failed with status: " + response.status);
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error:any) {
+    console.log(error.response);
     return error;
   }
 });
 
+export const addToCart = createAsyncThunk('product/addToCart',
+async ({ quantity, id }: { quantity: number, id: string}) => {
+  try {
+    console.log(id);
+    console.log(quantity);
+    const response = await axios.post(`${baseURL}/api/cart/${id}`, 
+    {quantity}, 
+    {
+      withCredentials : true
+    });
+
+    if (response.status === 200) {
+      console.log(response.data.msg);
+      console.log(response.data);
+
+      return response.data;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error: any) {
+    console.log(error.response);
+    return error;
+  }
+});
+
+export const getAllCart = createAsyncThunk('product/getAllCart', async () => {
+  try {
+      const response = await axios.get(`${baseURL}/api/cart`,{withCredentials : true});
+
+      if (response.status === 200) {
+          console.log(response.data.msg);
+          console.log(response.data);
+          return response.data;
+      } else {
+          throw new Error("Request failed with status: " + response.status);
+      }
+  } catch (error: any) {
+    console.log("ini error");
+    throw error.response;
+  }
+});
 
 const productSlice = createSlice({
   name: 'auth',
