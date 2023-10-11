@@ -50,7 +50,7 @@ class Navbar extends Component<any, NavbarState> {
     const userProps = this.props.dataUser;
 
     const { cartProps } = this.props;
-    const data = cartProps.data.length;
+    const cartTotal = cartProps.data.length;
 
     return (
       <nav className="bg-gray-700 p-3">
@@ -93,7 +93,7 @@ class Navbar extends Component<any, NavbarState> {
                     <div className="relative">
                       <div className="t-0 absolute left-4">
                         <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
-                          {data}
+                          {cartTotal}
                         </p>
                       </div>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" className="file: mt-2 h-6 w-6">
