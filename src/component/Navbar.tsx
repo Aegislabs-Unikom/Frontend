@@ -115,7 +115,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-    logoutAsync, // Map the action to props
+    logoutAsync,
+    getAllCart // Map the action to props
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Navbar));
