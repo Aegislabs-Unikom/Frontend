@@ -50,7 +50,8 @@ class CartPage extends Component<any, State>{
             onSuccess: async (result:any) => {
               this.setState({ token: "" });
               await this.statusPayment("Success");
-              this.props.router.navigate(`/`);
+              //this.props.router.navigate(`/`);
+              window.location.href = "/";
             },
             onPending: async (result:any) => {
               this.setState({ token: "" });
@@ -98,18 +99,18 @@ class CartPage extends Component<any, State>{
 
     async getData () {
       this.props.getAllCart()
-      .then(() => {
-        // this.dataProps = this.props;
-        const { cartProps } = this.props;
-        // this.dataProduct = this.props.dataProps.data;
-        // console.log(dataProps);
-        // const data = dataProduct.data;
+        .then(() => {
+          // this.dataProps = this.props;
+          const { cartProps } = this.props;
+          // this.dataProduct = this.props.dataProps.data;
+          // console.log(dataProps);
+          // const data = dataProduct.data;
 
-        this.setState({ 
-            productsData: cartProps.data
-         });
-        console.log(this.state.productsData.length===0);
-      });
+          this.setState({ 
+              productsData: cartProps.data
+           });
+          console.log(this.state.productsData.length===0);
+        });
     }
 
     editProductById = async (productId: string) => {
