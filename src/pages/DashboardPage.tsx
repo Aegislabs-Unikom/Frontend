@@ -46,9 +46,17 @@ class DashboardPage extends Component<any, State>{
     
     getData = async () => {
         this.props.getAllProducts()
-        .then(function name(params: any) {
-        //   console.log(params);       
-        });
+        .then(() => {
+            // this.dataProps = this.props;
+            const { dataProps } = this.props;
+            // this.dataProduct = this.props.dataProps.data;
+            // console.log(dataProps);
+            // const data = dataProduct.data;
+
+            this.setState({ 
+                productsData: dataProps.data
+             });
+          });
     }
     editProductById = async (productId: string) => {
         this.props.router.navigate(`/product-page/${productId}`);
@@ -70,9 +78,9 @@ class DashboardPage extends Component<any, State>{
     }
 
     render(){
-        const { dataProps } = this.props;
-        const data = dataProps.data;
-        // console.log(dataProps)
+        // const { dataProps } = this.props;
+        // const data = dataProps.data;
+        // console.log(dataProps);
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
@@ -121,7 +129,7 @@ class DashboardPage extends Component<any, State>{
                     )}
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                        {data?.map((product:any) => {
+                        {this.state.productsData.map((product:any) => {
                             return ( //buat komponen terpisah
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
