@@ -73,6 +73,24 @@ export const getAllCart = createAsyncThunk('product/getAllCart', async () => {
   }
 });
 
+export const deleteProductInCart = createAsyncThunk('product/deleteProductInCart',
+async ({ id }: { id: string}) => {
+  try {
+    console.log(id);
+    const response = await axios.delete(`${baseURL}/api/cart/${id}`, {withCredentials : true});
+
+    if (response.status === 200) {
+      console.log(response.data.msg);
+      return response.data;
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  } catch (error:any) {
+    console.log(error.response);
+    return error;
+  }
+});
+
 const cartSlice = createSlice({
   name: 'auth',
   initialState,
