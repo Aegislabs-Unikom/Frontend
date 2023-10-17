@@ -4,7 +4,14 @@ import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
 import { addToCart, getAllCart } from "../store/cart/CartSlice";
+import { statusPaymentOrder, processCartToPayment } from "../store/paymentOrder/PaymentSlice";
 import { withRouter } from "../helper/withRouter";
+
+declare global {
+    interface Window {
+      snap: any; // Change 'any' to the actual type if you have it
+    }
+  }
 
 type Products = {
     id: string;
@@ -16,7 +23,9 @@ type Products = {
   
   type State = {
     productsData: Products[];
-    quantity: number; //test
+    quantity: number; //test;
+    loading: boolean;
+    token:string;
   };
 
 class CartPage extends Component<any, State>{
@@ -25,12 +34,54 @@ class CartPage extends Component<any, State>{
     
         this.state = {
             productsData: [],
-            quantity: 0 //test
+            quantity: 0, //test
+            loading: true,
+            token:"",
         };
     }
     
     componentDidMount() {
         this.getData();
+    }
+
+    componentDidUpdate(prevProps: any, prevState: any) {
+        if (this.state.token !== prevState.token) {
+          window.snap.pay(this.state.token, {
+            onSuccess: async (result:any) => {
+              this.setState({ token: "" });
+              await this.statusPayment("Success");
+              //this.props.router.navigate(`/`);
+              window.location.href = "/";
+            },
+            onPending: async (result:any) => {
+              this.setState({ token: "" });
+              await this.statusPayment("Pending");
+            },
+            onError: async (result:any) => {
+              console.log(result);
+              this.setState({ token: "" });
+              await this.statusPayment("Failed");
+            },
+            onClose: async () => {
+              console.log("You closed the popup without finishing the payment");
+              this.setState({ token: "" });
+            },
+          });
+        }
+      }
+    
+    componentWillUnmount() {
+        const midtransUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+        let scriptTag = document.createElement("script");
+        scriptTag.src = midtransUrl;
+
+        const midtransClientKey = "SB-Mid-server-sAtp_QY55EYAjSAaEN1Tbpo9";
+        scriptTag.setAttribute("data-client-key", midtransClientKey);
+        document.body.appendChild(scriptTag);
+
+        return () => {
+            document.body.removeChild(scriptTag);
+          };
     }
 
     // componentDidUpdate(prevProps: any) {
@@ -45,12 +96,23 @@ class CartPage extends Component<any, State>{
     //       }
     // }
     count = 0;
-    getData = async () => {
+
+    async getData () {
         this.props.getAllCart()
-        .then(function name(params: any) {
-        //   console.log(params);       
+        .then(() => {
+          // this.dataProps = this.props;
+          const { cartProps } = this.props;
+          // this.dataProduct = this.props.dataProps.data;
+          // console.log(dataProps);
+          // const data = dataProduct.data;
+
+          this.setState({ 
+              productsData: cartProps.data
+           });
+          console.log(this.state.productsData.length===0);
         });
     }
+
     editProductById = async (productId: string) => {
         this.props.router.navigate(`/product-page/${productId}`);
     }
@@ -67,8 +129,27 @@ class CartPage extends Component<any, State>{
                     console.error("Error deleting product:", error);
                 });    
         }
-        
     }
+
+    async processPayment() {
+      try {
+          const result = await this.props.processCartToPayment();
+          const token = result.payload.token;
+          this.setState({ token }, () => {
+            console.log("Token state:", this.state.token); // Log the updated value.
+          });
+    } catch (error) {
+        console.error("Error processing payment:", error);
+    }
+      }
+
+    statusPayment = async (newStatus:string) => {
+        try {
+          this.props.statusPaymentOrder({ status: newStatus });
+        } catch (error) {
+          console.error("Error processing payment:", error);
+        }
+    }    
 
     checkOut = async (id: string) => { //mau diganti
         if (this.state.quantity === 0) {
@@ -89,6 +170,10 @@ class CartPage extends Component<any, State>{
           console.error(error);
         }
     };
+
+    totalAmount(data: any){
+
+    }
 
     onclick(type: any, quantity: number){ //test
         console.log(quantity);
@@ -116,12 +201,20 @@ class CartPage extends Component<any, State>{
 
 
     render(){
-        const { cartProps } = this.props;
-        const data = cartProps.data;
+        // const { cartProps } = this.props;
+        // const data = cartProps.data;
+        // console.log(data);
+        // const amount = data.
+        // const grandTotal = 0;
+        const cartIsNull = this.state.productsData.length === 0;
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
         const isAdmin = role === 'Admin';
+
+        // if (this.state.loading) {
+        //     return <p>Loading...</p>;
+        // }
 
         return (
             <div className="text-gray-600 font-body">
@@ -164,53 +257,44 @@ class CartPage extends Component<any, State>{
                     ) : (
                         <div className="mb-16"></div>
                     )}
-                <div className=" w-11/12 m-auto">
-                    <div className="grid lg:grid-cols-5">
-                        {data?.map((cart:any) => {
-                            return ( //buat komponen terpisah
-                            <div key={cart.product._id} className="max-w-sm w-full lg:max-w-full mb-4">
-                                    <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-                                        <Link
-                                            to={`/product/${cart.product._id}`}>
-                                            <div className="mb-3">
-                                                <img src={cart.product.image} alt="" className="max-h-56 m-auto"/>
-                                                <p className="text-gray-700 text-base mt-2">{cart.product.nama_produk}</p>
-                                                <p className="text-gray-700 text-base mt-1">{cart.product.description}</p>
-                                                <p className="text-gray-700 text-base">{cart.product.price} pcs</p>
-                                                <p className="text-gray-700 text-base">{cart.quantity}</p>
-                                            </div>
-                                        </Link>
-                                        {isAdmin ? (
-                                        <div className="flex">
-                                            <button
-                                                className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
-                                                onClick={() => this.editProductById(cart.product._id)}
-                                                > edit
-                                            </button>
-                                            <button
-                                                className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/3 h-9 p-2"
-                                                onClick={() => this.deleteProductById(cart.product._id)}>delete
-                                            </button>
-                                        </div>
-                                        ):(
-                                            <div className="mb-5">
-                                                <div className="flex border-gray-200">
-                                                    {/* <div className="flex"> //tambah dan kurang
-                                                        <button onClick={this.onclick.bind(this, 'add',cart.quantity )} className="mr-2">+</button>
-                                                            <input type="text" disabled value={this.count = cart.quantity} onChange={(e) => this.setState({ quantity: parseInt(e.target.value) })} className="w-6 text-center"/>
-                                                        <button onClick={this.onclick.bind(this, 'sub', cart.quantity)} className="ml-2">-</button>
-                                                    </div> */}
-                                                    <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-2 focus:outline-none hover:bg-red-600 rounded" onClick={() => this.handleCheckoutClick(cart._id)}>Checkout</button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                <div className="max-w-2xl mx-auto p-4">
+                    <h1 className="text-2xl font-semibold mb-4">Your Cart</h1>
+                    {cartIsNull? (
+                        <h1 className="text-2xl font-semibold mb-4">Cart is Empty...</h1>
+                    ):(
+                        <ul>
+                        {this.state.productsData?.map((item:any) => (
+                            <li
+                            key={item.product._id}
+                            className="border border-gray-300 p-4 mb-4 flex items-center"
+                            >
+                            <div className="flex-shrink-0">
+                                <img
+                                src={item.product.image}
+                                alt={item.product.nama_produk}
+                                className="w-16 h-16 object-cover"
+                                />
+                            </div>
+                            <div className="ml-4">
+                                <h2 className="text-lg font-semibold">
+                                {item.product.nama_produk}
+                                </h2>
+                                <p className="text-gray-600">Rp. {item.product.price}</p>
+                                <p className="text-gray-600">Quantity: {item.quantity}</p>
+                                <p className="text-gray-600">Total: {(item.quantity)*(item.product.price)}</p>
+                                this.grandTotal =+ {(item.quantity)*(item.product.price)}
+                            </div>
+                            </li>
+                        ))}
+                            <button
+                            className="bg-blue-500 hover-bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                            onClick={() => this.processPayment()}
+                            >
+                              Process Payment
+                            </button>
+                        </ul>
+                    )}
                 </div>
-                
             </div>
         )
     }
@@ -219,14 +303,17 @@ class CartPage extends Component<any, State>{
 const mapStateToProps = (state: any) => ({
     userProps: state.auth,
     dataProps: state.products,
-    cartProps: state.cart
+    cartProps: state.cart,
+    paymentProps: state.payment,
   });
   
   const mapDispatchToProps = {
     getAllProducts, 
     deleteProduct,
     addToCart,
-    getAllCart
+    getAllCart,
+    statusPaymentOrder,
+    processCartToPayment
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(CartPage));
