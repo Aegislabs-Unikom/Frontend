@@ -80,7 +80,7 @@ class DashboardPage extends Component<any, State>{
     render(){
         // const { dataProps } = this.props;
         // const data = dataProps.data;
-        // console.log(dataProps);
+        // console.log(dataProps)
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
@@ -143,17 +143,17 @@ class DashboardPage extends Component<any, State>{
                                             </div>
                                         </Link>
                                         {isAdmin ? (
-                                        <div className="flex">
-                                            <button
-                                                className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
-                                                onClick={() => this.editProductById(product._id)}
-                                                > edit
-                                            </button>
-                                            <button
-                                                className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/3 h-9 p-2"
-                                                onClick={() => this.deleteProductById(product._id)}>delete
-                                            </button>
-                                        </div>
+                                            <div className="flex">
+                                                <button
+                                                    className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
+                                                    onClick={() => this.editProductById(product._id)}
+                                                    > edit
+                                                </button>
+                                                <button
+                                                    className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/3 h-9 p-2"
+                                                    onClick={() => this.deleteProductById(product._id)}>delete
+                                                </button>
+                                            </div>
                                         ):(
                                             <div className="mb-5">
                                             </div>
