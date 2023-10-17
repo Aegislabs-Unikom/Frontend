@@ -4,6 +4,7 @@ import { loadState, saveState } from './localstorage';
 import ProductSlice from './product/ProductSlice';
 import CategorySlice from './category/CategorySlice';
 import CartSlice from './cart/CartSlice';
+import PaymentSlice from './paymentOrder/PaymentSlice';
 
 const persistedState = loadState();
 const store = configureStore({
@@ -11,7 +12,8 @@ const store = configureStore({
     auth: authReducer,
     products: ProductSlice,
     category: CategorySlice,
-    cart: CartSlice
+    cart: CartSlice,
+    payment: PaymentSlice,
   },
   preloadedState: persistedState
 });
