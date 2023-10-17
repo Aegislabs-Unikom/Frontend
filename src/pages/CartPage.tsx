@@ -97,10 +97,19 @@ class CartPage extends Component<any, State>{
     count = 0;
 
     async getData () {
-        this.props.getAllCart();
-        // .then(function name(params: any) {
-        //   console.log(params);       
-        // });
+      this.props.getAllCart()
+      .then(() => {
+        // this.dataProps = this.props;
+        const { cartProps } = this.props;
+        // this.dataProduct = this.props.dataProps.data;
+        // console.log(dataProps);
+        // const data = dataProduct.data;
+
+        this.setState({ 
+            productsData: cartProps.data
+         });
+        console.log(this.state.productsData.length===0);
+      });
     }
 
     editProductById = async (productId: string) => {
@@ -128,19 +137,6 @@ class CartPage extends Component<any, State>{
           this.setState({ token }, () => {
             console.log("Token state:", this.state.token); // Log the updated value.
           });
-        // // const { paymentProps } = this.props;
-        // await this.props.processCartToPayment()
-        // .then((params: any) =>{
-        //   console.log("ini params");
-        //   console.log(params.payload.token);
-        //   console.log("ini state");
-        //   this.setState({token: params.payload.token});
-        //   console.log(this.state.token);
-        // });
-        // console.log(this.setState({ token: paymentProps.token }));
-        // this.setState({ token: paymentProps.token }, () => {
-        //     console.log(this.state.token); // This will log the updated value.
-        // });
     } catch (error) {
         console.error("Error processing payment:", error);
     }
@@ -148,7 +144,7 @@ class CartPage extends Component<any, State>{
 
     statusPayment = async (newStatus:string) => {
         try {
-          this.props.statusPaymentOrder(newStatus);
+          this.props.statusPaymentOrder({ status: newStatus });
         } catch (error) {
           console.error("Error processing payment:", error);
         }
@@ -204,12 +200,12 @@ class CartPage extends Component<any, State>{
 
 
     render(){
-        const { cartProps } = this.props;
-        const data = cartProps.data;
+        // const { cartProps } = this.props;
+        // const data = cartProps.data;
         // console.log(data);
         // const amount = data.
         // const grandTotal = 0;
-        const cartIsNull = cartProps.data.length === 0;
+        const cartIsNull = this.state.productsData.length === 0;
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
@@ -266,7 +262,7 @@ class CartPage extends Component<any, State>{
                         <h1 className="text-2xl font-semibold mb-4">Cart is Empty...</h1>
                     ):(
                         <ul>
-                        {data.map((item:any) => (
+                        {this.state.productsData?.map((item:any) => (
                             <li
                             key={item.product._id}
                             className="border border-gray-300 p-4 mb-4 flex items-center"
