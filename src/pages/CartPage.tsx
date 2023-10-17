@@ -3,12 +3,8 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
-<<<<<<< Updated upstream
-import { addToCart, getAllCart } from "../store/cart/CartSlice";
-=======
 import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
 import { statusPaymentOrder, processCartToPayment } from "../store/paymentOrder/PaymentSlice";
->>>>>>> Stashed changes
 import { withRouter } from "../helper/withRouter";
 
 type Products = {
@@ -38,19 +34,6 @@ class CartPage extends Component<any, State>{
         this.getData();
     }
 
-<<<<<<< Updated upstream
-    // componentDidUpdate(prevProps: any) {
-    //     console.log(this.props.dataProps.data.length);
-    //     console.log(prevProps.dataProps.data.length);
-    //     // if (this.props.dataProps.data.length !== prevProps.dataProps.data.length) {
-    //     //     this.getData();
-    //     // }
-    //     if (prevProps.dataProps.data.length !== this.props.dataProps.data.length) {
-    //         console.log('pokemons state has changed.');
-    //         this.getData();
-    //       }
-    // }
-=======
     componentDidUpdate(prevProps: any, prevState: any) {
         if (this.state.token !== prevState.token) {
           window.snap.pay(this.state.token, {
@@ -91,14 +74,9 @@ class CartPage extends Component<any, State>{
           };
     }
 
->>>>>>> Stashed changes
     count = 0;
     getData = async () => {
         this.props.getAllCart()
-<<<<<<< Updated upstream
-        .then(function name(params: any) {
-        //   console.log(params);       
-=======
         .then(() => {
           // this.dataProps = this.props;
           const { cartProps } = this.props;
@@ -109,7 +87,6 @@ class CartPage extends Component<any, State>{
           this.setState({ 
               productsData: cartProps.data
            });
->>>>>>> Stashed changes
         });
     }
     editProductById = async (productId: string) => {
@@ -131,52 +108,6 @@ class CartPage extends Component<any, State>{
         
     }
 
-<<<<<<< Updated upstream
-    checkOut = async (id: string) => { //mau diganti
-        if (this.state.quantity === 0) {
-          alert("barang kosong");
-          return;
-        } 
-        try {
-          const { quantity } = this.state;
-          await this.props
-            .addToCart({ id, quantity })
-            .then(
-                console.log("berhasil")
-            )
-            .catch((error: any) => {
-              console.error(error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-    };
-
-    onclick(type: any, quantity: number){ //test
-        console.log(quantity);
-        if (quantity === 0 && type === 'add') {
-            quantity =+ 1;
-          } else if (quantity > 0 ){
-            console.log("tambah");
-            (type === 'add' ? quantity =+ 1 : quantity =- 1 )
-          }
-        // this.setState(prevProps => {
-        //   if (prevProps.quantity === 0 && type === 'add') {
-        //     return {quantity: prevProps.quantity + 1};
-        //   } else if (prevProps.quantity > 0 ){
-        //     console.log("tambah");
-        //     console.log(prevProps.quantity);
-        //     return {quantity: type === 'add' ? prevProps.quantity + 1: prevProps.quantity - 1}
-        //   }
-        //   return null;
-        // });
-      }
-
-    handleCheckoutClick = (id: string) => { //test
-        this.checkOut(id);
-    };
-
-=======
     deleteProductInCart = async (productId: string) => {
         const confirm = window.confirm('Delete this product?');
         if (confirm) {
@@ -210,7 +141,6 @@ class CartPage extends Component<any, State>{
           console.error("Error processing payment:", error);
         }
     }    
->>>>>>> Stashed changes
 
     render(){
         const { cartProps } = this.props;
