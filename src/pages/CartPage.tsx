@@ -3,7 +3,12 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
+<<<<<<< Updated upstream
 import { addToCart, getAllCart } from "../store/cart/CartSlice";
+=======
+import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
+import { statusPaymentOrder, processCartToPayment } from "../store/paymentOrder/PaymentSlice";
+>>>>>>> Stashed changes
 import { withRouter } from "../helper/withRouter";
 
 type Products = {
@@ -33,6 +38,7 @@ class CartPage extends Component<any, State>{
         this.getData();
     }
 
+<<<<<<< Updated upstream
     // componentDidUpdate(prevProps: any) {
     //     console.log(this.props.dataProps.data.length);
     //     console.log(prevProps.dataProps.data.length);
@@ -44,11 +50,66 @@ class CartPage extends Component<any, State>{
     //         this.getData();
     //       }
     // }
+=======
+    componentDidUpdate(prevProps: any, prevState: any) {
+        if (this.state.token !== prevState.token) {
+          window.snap.pay(this.state.token, {
+            onSuccess: async (result:any) => {
+              this.setState({ token: "" });
+              await this.statusPayment("Success");
+              //this.props.router.navigate(`/`);
+              window.location.href = "/";
+            },
+            onPending: async (result:any) => {
+              this.setState({ token: "" });
+              await this.statusPayment("Pending");
+            },
+            onError: async (result:any) => {
+              console.log(result);
+              this.setState({ token: "" });
+              await this.statusPayment("Failed");
+            },
+            onClose: async () => {
+              console.log("You closed the popup without finishing the payment");
+              this.setState({ token: "" });
+            },
+          });
+        }
+      }
+    
+    componentWillUnmount() {
+        const midtransUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+        let scriptTag = document.createElement("script");
+        scriptTag.src = midtransUrl;
+
+        const midtransClientKey = "SB-Mid-server-sAtp_QY55EYAjSAaEN1Tbpo9";
+        scriptTag.setAttribute("data-client-key", midtransClientKey);
+        document.body.appendChild(scriptTag);
+
+        return () => {
+            document.body.removeChild(scriptTag);
+          };
+    }
+
+>>>>>>> Stashed changes
     count = 0;
     getData = async () => {
         this.props.getAllCart()
+<<<<<<< Updated upstream
         .then(function name(params: any) {
         //   console.log(params);       
+=======
+        .then(() => {
+          // this.dataProps = this.props;
+          const { cartProps } = this.props;
+          // this.dataProduct = this.props.dataProps.data;
+          // console.log(dataProps);
+          // const data = dataProduct.data;
+
+          this.setState({ 
+              productsData: cartProps.data
+           });
+>>>>>>> Stashed changes
         });
     }
     editProductById = async (productId: string) => {
@@ -70,6 +131,7 @@ class CartPage extends Component<any, State>{
         
     }
 
+<<<<<<< Updated upstream
     checkOut = async (id: string) => { //mau diganti
         if (this.state.quantity === 0) {
           alert("barang kosong");
@@ -114,6 +176,41 @@ class CartPage extends Component<any, State>{
         this.checkOut(id);
     };
 
+=======
+    deleteProductInCart = async (productId: string) => {
+        const confirm = window.confirm('Delete this product?');
+        if (confirm) {
+            console.log(productId);
+            await this.props.deleteProductInCart({ id: productId })
+                .then(()=>{
+                    this.getData();
+                })
+                .catch((error: any) => {
+                    console.error("Error deleting product:", error);
+                });    
+        }
+    }
+
+    async processPayment() {
+      try {
+          const result = await this.props.processCartToPayment();
+          const token = result.payload.token;
+          this.setState({ token }, () => {
+            console.log("Token state:", this.state.token); // Log the updated value.
+          });
+    } catch (error) {
+        console.error("Error processing payment:", error);
+    }
+      }
+
+    statusPayment = async (newStatus:string) => {
+        try {
+          this.props.statusPaymentOrder({ status: newStatus });
+        } catch (error) {
+          console.error("Error processing payment:", error);
+        }
+    }    
+>>>>>>> Stashed changes
 
     render(){
         const { cartProps } = this.props;
@@ -164,6 +261,7 @@ class CartPage extends Component<any, State>{
                     ) : (
                         <div className="mb-16"></div>
                     )}
+<<<<<<< Updated upstream
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
                         {data?.map((cart:any) => {
@@ -209,6 +307,49 @@ class CartPage extends Component<any, State>{
                             )
                         })}
                     </div>
+=======
+                <div className="max-w-2xl mx-auto p-4">
+                    <h1 className="text-2xl font-semibold mb-4">Your Cart</h1>
+                    {cartIsNull? (
+                        <h1 className="text-2xl font-semibold mb-4">Cart is Empty...</h1>
+                    ):(
+                        <ul>
+                        {this.state.productsData?.map((item:any) => (
+                            <li
+                            key={item.product._id}
+                            className="border border-gray-300 p-4 mb-4 flex items-center"
+                            >
+                            <div className="flex-shrink-0">
+                                <img
+                                src={item.product.image}
+                                alt={item.product.nama_produk}
+                                className="w-16 h-16 object-cover"
+                                />
+                            </div>
+                            <div className="ml-4 w-9/12">
+                                <h2 className="text-lg font-semibold">
+                                {item.product.nama_produk}
+                                </h2>
+                                <p className="text-gray-600">Rp. {item.product.price}</p>
+                                <p className="text-gray-600">Quantity: {item.quantity}</p>
+                                <p className="text-gray-600">Total: {(item.quantity)*(item.product.price)}</p>
+                                this.grandTotal =+ {(item.quantity)*(item.product.price)}
+                            </div>
+                            <button
+                              className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/8 h-9 p-2 float-right"
+                              onClick={() => this.deleteProductInCart(item.product._id)}>delete
+                            </button>                
+                            </li>
+                        ))}
+                            <button
+                            className="bg-blue-500 hover-bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                            onClick={() => this.processPayment()}
+                            >
+                              Process Payment
+                            </button>
+                        </ul>
+                    )}
+>>>>>>> Stashed changes
                 </div>
                 
             </div>
@@ -226,7 +367,14 @@ const mapStateToProps = (state: any) => ({
     getAllProducts, 
     deleteProduct,
     addToCart,
+<<<<<<< Updated upstream
     getAllCart
+=======
+    getAllCart,
+    statusPaymentOrder,
+    processCartToPayment,
+    deleteProductInCart
+>>>>>>> Stashed changes
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(CartPage));
