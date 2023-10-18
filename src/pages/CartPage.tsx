@@ -98,6 +98,7 @@ class CartPage extends Component<any, State>{
     count = 0;
 
     async getData () {
+      try {
         this.props.getAllCart()
         .then(() => {
           // this.dataProps = this.props;
@@ -109,8 +110,14 @@ class CartPage extends Component<any, State>{
           this.setState({ 
               productsData: cartProps.data
            });
-          console.log(this.state.productsData.length===0);
+        }); 
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.setState({ loading: false }, () => {
+          console.log("Token load:", this.state.loading); // Log the updated value.
         });
+      }
     }
 
     editProductById = async (productId: string) => {
@@ -226,7 +233,8 @@ class CartPage extends Component<any, State>{
         const isAdmin = role === 'Admin';
 
         // if (this.state.loading) {
-        //     return <p>Loading...</p>;
+        //   console.log(this.state.loading);
+        //   return <p>Loading...</p>;
         // }
 
         return (
