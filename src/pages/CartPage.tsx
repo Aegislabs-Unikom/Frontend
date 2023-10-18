@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
-import { addToCart, getAllCart } from "../store/cart/CartSlice";
+import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
 import { statusPaymentOrder, processCartToPayment } from "../store/paymentOrder/PaymentSlice";
 import { withRouter } from "../helper/withRouter";
 
@@ -98,6 +98,7 @@ class CartPage extends Component<any, State>{
     count = 0;
 
     async getData () {
+      try {
         this.props.getAllCart()
         .then(() => {
           // this.dataProps = this.props;
@@ -109,8 +110,14 @@ class CartPage extends Component<any, State>{
           this.setState({ 
               productsData: cartProps.data
            });
-          console.log(this.state.productsData.length===0);
+        }); 
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.setState({ loading: false }, () => {
+          console.log("Token load:", this.state.loading); // Log the updated value.
         });
+      }
     }
 
     editProductById = async (productId: string) => {
@@ -199,6 +206,19 @@ class CartPage extends Component<any, State>{
         this.checkOut(id);
     };
 
+    deleteProductInCart = async (productId: string) => {
+      const confirm = window.confirm('Delete this product?');
+      if (confirm) {
+          console.log(productId);
+          await this.props.deleteProductInCart({ id: productId })
+              .then(()=>{
+                  this.getData();
+              })
+              .catch((error: any) => {
+                  console.error("Error deleting product:", error);
+              });    
+      }
+  }
 
     render(){
         // const { cartProps } = this.props;
@@ -213,7 +233,8 @@ class CartPage extends Component<any, State>{
         const isAdmin = role === 'Admin';
 
         // if (this.state.loading) {
-        //     return <p>Loading...</p>;
+        //   console.log(this.state.loading);
+        //   return <p>Loading...</p>;
         // }
 
         return (
@@ -275,7 +296,7 @@ class CartPage extends Component<any, State>{
                                 className="w-16 h-16 object-cover"
                                 />
                             </div>
-                            <div className="ml-4">
+                            <div className="ml-4 w-9/12">
                                 <h2 className="text-lg font-semibold">
                                 {item.product.nama_produk}
                                 </h2>
@@ -284,6 +305,10 @@ class CartPage extends Component<any, State>{
                                 <p className="text-gray-600">Total: {(item.quantity)*(item.product.price)}</p>
                                 this.grandTotal =+ {(item.quantity)*(item.product.price)}
                             </div>
+                            <button
+                              className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/8 h-9 p-2 float-right"
+                              onClick={() => this.deleteProductInCart(item.product._id)}>delete
+                            </button> 
                             </li>
                         ))}
                             <button
@@ -312,8 +337,9 @@ const mapStateToProps = (state: any) => ({
     deleteProduct,
     addToCart,
     getAllCart,
+    deleteProductInCart,
     statusPaymentOrder,
-    processCartToPayment
+    processCartToPayment,
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(CartPage));
