@@ -98,7 +98,7 @@ class CartPage extends Component<any, State>{
     count = 0;
 
     async getData () {
-      try {
+      try{
         this.props.getAllCart()
         .then(() => {
           // this.dataProps = this.props;
