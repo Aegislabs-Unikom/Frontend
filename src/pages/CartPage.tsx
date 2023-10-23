@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
 import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
-import { statusPaymentOrder, processCartToPayment } from "../store/paymentOrder/PaymentSlice";
+import { statusPaymentOrder, processCartToPayment, getProvince, getKota, cekOngkir } from "../store/paymentOrder/PaymentSlice";
 import { withRouter } from "../helper/withRouter";
 
 declare global {
@@ -13,19 +13,32 @@ declare global {
     }
   }
 
-type Products = {
+  type Product = {
     id: string;
     nama_produk: string;
     description: string;
     price: number;
     stock: number;
   };
-  
+
+type Products = {
+    product: Product;
+    quantity: number;
+  };
+
   type State = {
     productsData: Products[];
-    quantity: number; //test;
     loading: boolean;
     token:string;
+    provinsiList: [];
+    kotaList: [];
+    tujuan: string;
+    berat: number;
+    alamat: string;
+    kurir: string;
+    hasil: any;
+    biayaOngkir: number;
+    infoPengiriman: [];
   };
 
 class CartPage extends Component<any, State>{
@@ -34,14 +47,23 @@ class CartPage extends Component<any, State>{
     
         this.state = {
             productsData: [],
-            quantity: 0, //test
             loading: true,
             token:"",
+            provinsiList: [],
+            kotaList: [],
+            tujuan: "",
+            berat: 1000,
+            alamat: "",
+            kurir: "",
+            hasil: "",
+            biayaOngkir: 0,
+            infoPengiriman: [],
         };
     }
     
     componentDidMount() {
         this.getData();
+        this.loadProvinsi();
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
@@ -50,8 +72,8 @@ class CartPage extends Component<any, State>{
             onSuccess: async (result:any) => {
               this.setState({ token: "" });
               await this.statusPayment("Success");
-              //this.props.router.navigate(`/`);
-              window.location.href = "/";
+              // this.props.router.navigate(`/`);
+              // window.location.href = "/";
             },
             onPending: async (result:any) => {
               this.setState({ token: "" });
@@ -97,6 +119,109 @@ class CartPage extends Component<any, State>{
     // }
     count = 0;
 
+    async loadProvinsi () {
+      this.props.getProvince()
+      .then((response: any) => {
+        const provinsiData = response.payload;
+        this.setState({ 
+          provinsiList: provinsiData
+       });
+      
+      })
+      .catch((error:any) => console.log(error));
+    }
+
+    async loadKota (id: string, el:string) {
+      this.props.getKota({id})
+      .then((response: any) => {
+        const kotaData = response.payload;
+        this.setState({ 
+          kotaList: kotaData
+       });
+      
+      })
+      .catch((error:any) => console.log(error));
+    }
+
+    async cekOngkir () {
+      if (this.state.tujuan && this.state.berat && this.state.kurir) {
+        // console.log({alamat: this.state.alamat,
+        //   tujuan: this.state.tujuan,
+        //   berat: this.state.berat,
+        //   kurir: this.state.kurir});
+        this.props.cekOngkir({
+          alamat: this.state.alamat,
+          tujuan: this.state.tujuan,
+          berat: this.state.berat,
+          kurir: this.state.kurir,
+        })
+        .then((response: any) => {
+          const cekInfoPengiriman = response.payload;
+          // console.log(cekInfoPengiriman);
+          this.setState({
+            biayaOngkir: cekInfoPengiriman.cost[0].value,
+            infoPengiriman: cekInfoPengiriman,
+          })
+          const temp = (
+            <table
+              cellPadding="5"
+              border={1}
+              style={{ borderCollapse: "collapse" }}
+            >
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Description</th>
+                  <th>Cost</th>
+                  <th>Estimated (Hari)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <b>{cekInfoPengiriman.service}</b>
+                  </td>
+                  <td>{cekInfoPengiriman.description}</td>
+                  <td>{cekInfoPengiriman.cost[0].value.toLocaleString()}</td>
+                  <td>{cekInfoPengiriman.cost[0].etd}</td>
+                </tr>
+              </tbody>
+            </table>
+          );
+          this.setState({hasil: temp});
+        })
+        .catch((error:any) => console.log(error));
+      }
+    }
+
+    totalPrice = () => {
+      const totalPrice = this.state.productsData.reduce(
+        (total, item) => total + item.product.price * item.quantity,
+        0
+      );
+
+      return totalPrice;
+    }
+
+    calculateTotalPrice = () => {
+      return this.totalPrice().toLocaleString();
+    };
+  
+    calculateShippingCost = () => {
+      return this.state.biayaOngkir;
+    };
+  
+    calculateTotalPayment = () => {
+      const shippingCost = this.calculateShippingCost();
+      const totalPayment = this.totalPrice() + shippingCost;
+      console.log(totalPayment);
+      if (shippingCost === 0) {
+        return 0;
+        // return totalPayment.toLocaleString();
+      }
+      return totalPayment.toLocaleString();
+    };
+
     async getData () {
       try {
         this.props.getAllCart()
@@ -104,7 +229,7 @@ class CartPage extends Component<any, State>{
           // this.dataProps = this.props;
           const { cartProps } = this.props;
           // this.dataProduct = this.props.dataProps.data;
-          // console.log(dataProps);
+          // console.log(cartProps.data);
           // const data = dataProduct.data;
 
           this.setState({ 
@@ -139,16 +264,20 @@ class CartPage extends Component<any, State>{
     }
 
     async processPayment() {
-      try {
-          const result = await this.props.processCartToPayment();
+      if (this.state.kurir && this.state.tujuan) {
+        try {
+          const result = await this.props.processCartToPayment({biayaOngkir: this.state.biayaOngkir});
           const token = result.payload.token;
           this.setState({ token }, () => {
             console.log("Token state:", this.state.token); // Log the updated value.
           });
-    } catch (error) {
-        console.error("Error processing payment:", error);
-    }
+        } catch (error) {
+            console.error("Error processing payment:", error);
+        }
+      } else {
+        alert('Lengkapi form tujuan paket terlebih dahulu');
       }
+    }
 
     statusPayment = async (newStatus:string) => {
         try {
@@ -157,54 +286,6 @@ class CartPage extends Component<any, State>{
           console.error("Error processing payment:", error);
         }
     }    
-
-    checkOut = async (id: string) => { //mau diganti
-        if (this.state.quantity === 0) {
-          alert("barang kosong");
-          return;
-        } 
-        try {
-          const { quantity } = this.state;
-          await this.props
-            .addToCart({ id, quantity })
-            .then(
-                console.log("berhasil")
-            )
-            .catch((error: any) => {
-              console.error(error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-    };
-
-    totalAmount(data: any){
-
-    }
-
-    onclick(type: any, quantity: number){ //test
-        console.log(quantity);
-        if (quantity === 0 && type === 'add') {
-            quantity =+ 1;
-          } else if (quantity > 0 ){
-            console.log("tambah");
-            (type === 'add' ? quantity =+ 1 : quantity =- 1 )
-          }
-        // this.setState(prevProps => {
-        //   if (prevProps.quantity === 0 && type === 'add') {
-        //     return {quantity: prevProps.quantity + 1};
-        //   } else if (prevProps.quantity > 0 ){
-        //     console.log("tambah");
-        //     console.log(prevProps.quantity);
-        //     return {quantity: type === 'add' ? prevProps.quantity + 1: prevProps.quantity - 1}
-        //   }
-        //   return null;
-        // });
-      }
-
-    handleCheckoutClick = (id: string) => { //test
-        this.checkOut(id);
-    };
 
     deleteProductInCart = async (productId: string) => {
       const confirm = window.confirm('Delete this product?');
@@ -283,7 +364,11 @@ class CartPage extends Component<any, State>{
                     {cartIsNull? (
                         <h1 className="text-2xl font-semibold mb-4">Cart is Empty...</h1>
                     ):(
-                        <ul>
+                       <>
+                       <div className="flex flex-wrap -mx-4">
+                        <div className="w-full md:w-1/2 p-4">
+                          <h2 className="text-2xl font-semibold mb-4">Cart</h2>
+                          <ul>
                         {this.state.productsData?.map((item:any) => (
                             <li
                             key={item.product._id}
@@ -307,17 +392,132 @@ class CartPage extends Component<any, State>{
                             </div>
                             <button
                               className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/8 h-9 p-2 float-right"
-                              onClick={() => this.deleteProductInCart(item.product._id)}>delete
+                              onClick={() => this.deleteProductInCart(item._id)}>delete
                             </button> 
                             </li>
                         ))}
-                            <button
-                            className="bg-blue-500 hover-bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-                            onClick={() => this.processPayment()}
-                            >
-                              Process Payment
-                            </button>
                         </ul>
+
+                        </div>
+                        <div className="w-full md:w-1/2 p-4">
+                          <h2 className="text-2xl font-semibold mb-4">Shipping Options</h2>
+                          <div>
+                            <table
+                              cellPadding="5"
+                              border={1}
+                              style={{ borderCollapse: "collapse" }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td colSpan={2} style={{ textAlign: "center" }}>
+                                    <b>TUJUAN PAKET</b>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Provinsi Tujuan</td>
+                                  <td>
+                                    <select
+                                      onChange={(e) => {
+                                        this.setState({ tujuan: e.target.value });
+                                        this.loadKota(e.target.value, "kot2");
+                                      }}
+                                      defaultValue={'DEFAULT'}
+                                    >
+                                      <option value="DEFAULT" disabled>
+                                        -- Pilih Provinsi --
+                                      </option>
+                                      {this.state.provinsiList.map((provinsi:any) => (
+                                        <option
+                                          key={provinsi.province_id}
+                                          value={provinsi.province_id}
+                                        >
+                                          {provinsi.province}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Kota Tujuan</td>
+                                  <td>
+                                    <select id="kot2" defaultValue={'DEFAULT'}>
+                                      <option value="DEFAULT" disabled>
+                                        -- Pilih Kota --
+                                      </option>
+                                      {this.state.kotaList.map((kota: any) => (
+                                        <option key={kota.city_id} value={kota.city_id}>
+                                          {kota.city_name}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Detail Pengiriman</td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      placeholder="Alamat Pengiriman"
+                                      onChange={(e) => this.setState({alamat: e.target.value})}
+                                    />
+                                  </td>
+                                </tr>
+
+                                <tr>
+                                  <td colSpan={2} style={{ textAlign: "center" }}>
+                                    <b>CEK ONGKOS</b>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Kurir</td>
+                                  <td>
+                                    <select onChange={(e) => this.setState({kurir: e.target.value})} defaultValue={'DEFAULT'}>
+                                      <option value="DEFAULT" disabled>
+                                        -- Pilih Kurir --
+                                      </option>
+                                      <option value="jne">JNE</option>
+                                      <option value="pos">POS Indonesia</option>
+                                      <option value="tiki">TIKI</option>
+                                    </select>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td></td>
+                                  <td>
+                                    <button onClick={() => this.cekOngkir()}>Cek Ongkir</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <br />
+                            <div id="hasil">{this.state.hasil}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <h2 className="text-2xl font-semibold mb-4">Summary</h2>
+                      <table className="w-full md:w-1/2 p-4 md:p-0 mx-auto md:ml-auto md:mr-0">
+                        <tbody>
+                          <tr>
+                            <td>Total Harga</td>
+                            <td className="text-right">Rp. {this.calculateTotalPrice()}</td>
+                          </tr>
+                          <tr>
+                            <td>Biaya Pengiriman</td>
+                            <td className="text-right">Rp. {this.calculateShippingCost()}</td>
+                          </tr>
+                          <tr className="bg-gray-100">
+                            <td>Total Pembayaran</td>
+                            <td className="text-right">Rp. {this.calculateTotalPayment()}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mx-auto block"
+                        onClick={() => this.processPayment()}
+                      >
+                        Process Payment
+                      </button>
+                       </>
                     )}
                 </div>
             </div>
@@ -340,6 +540,9 @@ const mapStateToProps = (state: any) => ({
     deleteProductInCart,
     statusPaymentOrder,
     processCartToPayment,
+    getProvince,
+    getKota,
+    cekOngkir
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(CartPage));
