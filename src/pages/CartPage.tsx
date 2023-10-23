@@ -6,6 +6,7 @@ import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
 import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
 import { statusPaymentOrder, processCartToPayment, getProvince, getKota, cekOngkir } from "../store/paymentOrder/PaymentSlice";
 import { withRouter } from "../helper/withRouter";
+import axios from "axios";
 
 declare global {
     interface Window {
@@ -280,8 +281,23 @@ class CartPage extends Component<any, State>{
     }
 
     statusPayment = async (newStatus:string) => {
+        // try {
+        //   this.props.statusPaymentOrder({ status: newStatus });
+        // } catch (error) {
+        //   console.error("Error processing payment:", error);
+        // }
         try {
-          this.props.statusPaymentOrder({ status: newStatus });
+          const response = await axios.post(
+            `https://aegisquest-ernafpm2wq-uc.a.run.app/api/order/status`,
+            {
+              status: newStatus,
+            },
+            {
+              withCredentials: true,
+            }
+          );
+          console.log(response.data);
+          alert(response.data.data.msg);
         } catch (error) {
           console.error("Error processing payment:", error);
         }
