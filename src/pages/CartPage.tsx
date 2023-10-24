@@ -73,7 +73,7 @@ class CartPage extends Component<any, State>{
             onSuccess: async (result:any) => {
               this.setState({ token: "" });
               await this.statusPayment("Success");
-              // this.props.router.navigate(`/`);
+              this.props.router.navigate(`/`);
               // window.location.href = "/";
             },
             onPending: async (result:any) => {
@@ -215,11 +215,11 @@ class CartPage extends Component<any, State>{
     calculateTotalPayment = () => {
       const shippingCost = this.calculateShippingCost();
       const totalPayment = this.totalPrice() + shippingCost;
-      console.log(totalPayment);
-      if (shippingCost === 0) {
-        return 0;
-        // return totalPayment.toLocaleString();
-      }
+      // console.log(totalPayment);
+      // if (shippingCost === 0) {
+      //   return 0;
+      //   // return totalPayment.toLocaleString();
+      // }
       return totalPayment.toLocaleString();
     };
 
@@ -297,7 +297,8 @@ class CartPage extends Component<any, State>{
             }
           );
           console.log(response.data);
-          alert(response.data.data.msg);
+          console.log(response.data.data);
+          alert(response.data.msg);
         } catch (error) {
           console.error("Error processing payment:", error);
         }
@@ -324,6 +325,7 @@ class CartPage extends Component<any, State>{
         // const amount = data.
         // const grandTotal = 0;
         const cartIsNull = this.state.productsData.length === 0;
+        console.log(this.state.productsData);
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
