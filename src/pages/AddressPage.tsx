@@ -24,6 +24,9 @@ class AddAddress extends Component<any, AddressState> {
       const { address } = this.state;
       this.props //dispatch 
         .addAlamat({ address })
+        .then(()=>{
+          this.props.router.navigate('/login');
+        })
         .catch((error: any) => {
           console.error(error);
         });

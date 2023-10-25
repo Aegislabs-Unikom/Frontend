@@ -7,6 +7,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ProductPage from './pages/ProductPage';
 import DetailPage from './pages/DetailPage';
 import CartPage from './pages/CartPage';
+import AddressPage from './pages/AddressPage';
 
 class App extends Component {
   render(){
@@ -24,7 +25,7 @@ class App extends Component {
           <Route path="/" element={<DashboardPage />} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/addAlamat" element={<CartPage />} />
+          <Route path="/addAdress" element={<AddressPage />} />
         </Routes>
       </BrowserRouter>
     );

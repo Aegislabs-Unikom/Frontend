@@ -26,7 +26,7 @@ class VerifyOTP extends Component<any, verifState> {
       this.props //dispatch 
         .verifyOTP({ otp })
         .then(() => {
-          this.props.router.navigate('/login');
+          this.props.router.navigate('/addAdress');
         })
         .catch((error: any) => {
           console.error(error);
