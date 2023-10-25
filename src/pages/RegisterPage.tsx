@@ -29,12 +29,25 @@ class Register extends Component<any, RegisterState> {
 
   handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { nama, email, alamat, no_hp, password, confPassword } = this.state;
+    const { 
+        nama, 
+        email, 
+        // alamat, 
+        no_hp, 
+        password, 
+        confPassword } = this.state;
 
     if (password === confPassword) {
         try {
             this.props //dispatch 
-                .register({ nama, email, alamat, no_hp, password, confPassword })
+                .register({ 
+                    nama,
+                    email, 
+                    // alamat, 
+                    no_hp, 
+                    password, 
+                    confPassword 
+                })
                 .then((response: any) => {
                     this.props.router.navigate('/verifyOTP');
                 })
@@ -75,14 +88,14 @@ class Register extends Component<any, RegisterState> {
                                     onChange={(e) => this.setState({ email: e.target.value })}
                                     className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">Alamat</label>
                                 <input type="text"
                                     name="alamat"
                                     value={this.state.alamat}
                                     onChange={(e) => this.setState({ alamat: e.target.value })}
                                     className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
-                            </div>
+                            </div> */}
                             <div>
                                 <label  className="block mb-2 text-sm font-medium text-gray-900 ">No Handphone</label>
                                 <input type="number"

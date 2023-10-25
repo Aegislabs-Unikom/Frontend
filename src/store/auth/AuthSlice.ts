@@ -56,13 +56,13 @@ async ({ email, password }: { email: string; password: string }) => {
 });
 
 export const register = createAsyncThunk('auth/register',
-async ({ nama, email, alamat, no_hp, password, confPassword  }: { nama: string, email: string, alamat: string, no_hp: string, password: string, confPassword: string }) => {
+async ({ nama, email, no_hp, password, confPassword  }: { nama: string, email: string, no_hp: string, password: string, confPassword: string }) => {
   
   try {
     const response = await axios.post(`${baseURL}/api/user/register`, {
         nama,
         email,
-        alamat,
+        // alamat,
         no_hp,
         password,
         confPassword
@@ -72,6 +72,26 @@ async ({ nama, email, alamat, no_hp, password, confPassword  }: { nama: string, 
         },
         withCredentials : true
       });
+    const responseData = response.data.data.user_id;
+    console.log(responseData);
+  } catch (error) {
+    return console.log(error);
+  }
+});
+
+export const addAlamat = createAsyncThunk('auth/addAlamat',
+async ({ alamat }: { alamat: string }) => {
+  
+  try {
+    const response = await axios.post(`${baseURL}/api/user/alamat`, {
+        alamat,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials : true
+      });
+      
     const responseData = response.data.data.user_id;
     console.log(responseData);
   } catch (error) {

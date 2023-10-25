@@ -24,6 +24,7 @@ class App extends Component {
           <Route path="/" element={<DashboardPage />} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/addAlamat" element={<CartPage />} />
         </Routes>
       </BrowserRouter>
     );
