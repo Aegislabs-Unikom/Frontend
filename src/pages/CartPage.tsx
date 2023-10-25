@@ -325,7 +325,6 @@ class CartPage extends Component<any, State>{
         // const amount = data.
         // const grandTotal = 0;
         const cartIsNull = this.state.productsData.length === 0;
-        // console.log(this.state.productsData);
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
