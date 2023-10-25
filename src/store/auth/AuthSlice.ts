@@ -79,26 +79,6 @@ async ({ nama, email, no_hp, password, confPassword  }: { nama: string, email: s
   }
 });
 
-export const addAlamat = createAsyncThunk('auth/addAlamat',
-async ({ alamat }: { alamat: string }) => {
-  
-  try {
-    const response = await axios.post(`${baseURL}/api/user/alamat`, {
-        alamat,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials : true
-      });
-      
-    const responseData = response.data.data.user_id;
-    console.log(responseData);
-  } catch (error) {
-    return console.log(error);
-  }
-});
-
 export const verifyOTP = createAsyncThunk('auth/verify',
 async ({ otp }: { otp: string }) => {
   try {
