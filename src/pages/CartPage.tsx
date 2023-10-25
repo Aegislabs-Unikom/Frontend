@@ -325,7 +325,7 @@ class CartPage extends Component<any, State>{
         // const amount = data.
         // const grandTotal = 0;
         const cartIsNull = this.state.productsData.length === 0;
-        console.log(this.state.productsData);
+        // console.log(this.state.productsData);
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
@@ -410,7 +410,7 @@ class CartPage extends Component<any, State>{
                             </div>
                             <button
                               className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/8 h-9 p-2 float-right"
-                              onClick={() => this.deleteProductInCart(item._id)}>delete
+                              onClick={() => this.deleteProductInCart(item.cart_id)}>delete
                             </button> 
                             </li>
                         ))}
