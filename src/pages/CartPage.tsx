@@ -6,11 +6,10 @@ import { getAllProducts, deleteProduct } from "../store/product/ProductSlice";
 import { addToCart, getAllCart, deleteProductInCart } from "../store/cart/CartSlice";
 import { statusPaymentOrder, processCartToPayment, getProvince, getKota, cekOngkir } from "../store/paymentOrder/PaymentSlice";
 import { withRouter } from "../helper/withRouter";
-import axios from "axios";
 
 declare global {
     interface Window {
-      snap: any; // Change 'any' to the actual type if you have it
+      snap: any;
     }
   }
 
@@ -39,7 +38,7 @@ type Products = {
     kurir: string;
     hasil: any;
     biayaOngkir: number;
-    infoPengiriman: [];
+    orderId: string;
   };
 
 class CartPage extends Component<any, State>{
@@ -58,7 +57,7 @@ class CartPage extends Component<any, State>{
             kurir: "",
             hasil: "",
             biayaOngkir: 0,
-            infoPengiriman: [],
+            orderId: "",
         };
     }
     
@@ -72,18 +71,17 @@ class CartPage extends Component<any, State>{
           window.snap.pay(this.state.token, {
             onSuccess: async (result:any) => {
               this.setState({ token: "" });
-              await this.statusPayment("Success");
+              await this.statusPayment("Success", this.state.orderId);
               this.props.router.navigate(`/`);
-              // window.location.href = "/";
             },
             onPending: async (result:any) => {
               this.setState({ token: "" });
-              await this.statusPayment("Pending");
+              await this.statusPayment("Success", this.state.orderId);
             },
             onError: async (result:any) => {
               console.log(result);
               this.setState({ token: "" });
-              await this.statusPayment("Failed");
+              await this.statusPayment("Failed", this.state.orderId);
             },
             onClose: async () => {
               console.log("You closed the popup without finishing the payment");
@@ -106,19 +104,6 @@ class CartPage extends Component<any, State>{
             document.body.removeChild(scriptTag);
           };
     }
-
-    // componentDidUpdate(prevProps: any) {
-    //     console.log(this.props.dataProps.data.length);
-    //     console.log(prevProps.dataProps.data.length);
-    //     // if (this.props.dataProps.data.length !== prevProps.dataProps.data.length) {
-    //     //     this.getData();
-    //     // }
-    //     if (prevProps.dataProps.data.length !== this.props.dataProps.data.length) {
-    //         console.log('pokemons state has changed.');
-    //         this.getData();
-    //       }
-    // }
-    count = 0;
 
     async loadProvinsi () {
       this.props.getProvince()
@@ -146,10 +131,6 @@ class CartPage extends Component<any, State>{
 
     async cekOngkir () {
       if (this.state.tujuan && this.state.berat && this.state.kurir) {
-        // console.log({alamat: this.state.alamat,
-        //   tujuan: this.state.tujuan,
-        //   berat: this.state.berat,
-        //   kurir: this.state.kurir});
         this.props.cekOngkir({
           alamat: this.state.alamat,
           tujuan: this.state.tujuan,
@@ -161,7 +142,6 @@ class CartPage extends Component<any, State>{
           // console.log(cekInfoPengiriman);
           this.setState({
             biayaOngkir: cekInfoPengiriman.cost[0].value,
-            infoPengiriman: cekInfoPengiriman,
           })
           const temp = (
             <table
@@ -269,9 +249,15 @@ class CartPage extends Component<any, State>{
         try {
           const result = await this.props.processCartToPayment({biayaOngkir: this.state.biayaOngkir});
           const token = result.payload.token;
-          this.setState({ token }, () => {
-            console.log("Token state:", this.state.token); // Log the updated value.
-          });
+          const orderId = result.payload.order_id;
+          // this.setState({ token }, () => {
+          //   console.log("Token state:", this.state.token); // Log the updated value.
+          // });
+          this.setState({token: token});
+          this.setState({orderId: orderId});
+          // this.setState({ orderId }, () => {
+          //   console.log("orderId state:", this.state.orderId); // Log the updated value.
+          // });
         } catch (error) {
             console.error("Error processing payment:", error);
         }
@@ -280,28 +266,28 @@ class CartPage extends Component<any, State>{
       }
     }
 
-    statusPayment = async (newStatus:string) => {
-        // try {
-        //   this.props.statusPaymentOrder({ status: newStatus });
-        // } catch (error) {
-        //   console.error("Error processing payment:", error);
-        // }
+    statusPayment = async (newStatus:string, orderId: string) => {
         try {
-          const response = await axios.post(
-            `https://aegisquest-ernafpm2wq-uc.a.run.app/api/order/status`,
-            {
-              status: newStatus,
-            },
-            {
-              withCredentials: true,
-            }
-          );
-          console.log(response.data);
-          console.log(response.data.data);
-          alert(response.data.msg);
+          this.props.statusPaymentOrder({ status: newStatus, order_id: orderId});
         } catch (error) {
           console.error("Error processing payment:", error);
         }
+        // try {
+        //   const response = await axios.post(
+        //     `https://aegisquest-ernafpm2wq-uc.a.run.app/api/order/status`,
+        //     {
+        //       status: newStatus,
+        //     },
+        //     {
+        //       withCredentials: true,
+        //     }
+        //   );
+        //   console.log(response.data);
+        //   console.log(response.data.data);
+        //   alert(response.data.msg);
+        // } catch (error) {
+        //   console.error("Error processing payment:", error);
+        // }
     }    
 
     deleteProductInCart = async (productId: string) => {
@@ -325,7 +311,6 @@ class CartPage extends Component<any, State>{
         // const amount = data.
         // const grandTotal = 0;
         const cartIsNull = this.state.productsData.length === 0;
-        console.log(this.state.productsData);
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;

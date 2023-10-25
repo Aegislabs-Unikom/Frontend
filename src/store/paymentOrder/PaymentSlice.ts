@@ -73,12 +73,14 @@ async ({ biayaOngkir }: { biayaOngkir: number}) => {
   });
 
   export const statusPaymentOrder = createAsyncThunk('payment/statusPaymentOrder',
-  async ({ status }: { status: string}) => {
+  async ({ status, order_id }: { status: string, order_id: string}) => {
     try {
       console.log({status: status});
+      console.log({order_id: order_id});
       const response = await axios.post(`${baseURL}/api/order/status`, 
       {
         status: status,
+        order_id: order_id,
       }, 
       {
         withCredentials : true,
@@ -91,7 +93,7 @@ async ({ biayaOngkir }: { biayaOngkir: number}) => {
       console.log(response.data);
 
       if (response.status === 200) {
-        alert(response.data.data.msg);
+        alert(response.data.msg);
         console.log(response.data);
         console.log("payment status berhasil");
       } else {
@@ -99,7 +101,7 @@ async ({ biayaOngkir }: { biayaOngkir: number}) => {
         alert("error");
       }
     } catch (error: any) {
-      console.log(error.response);
+      console.log(error);
       return error;
     }
   });
