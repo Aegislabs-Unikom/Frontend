@@ -2,7 +2,7 @@ import Navbar from "../component/Navbar";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
-import { getAllProducts, deleteProduct, addToCart } from "../store/product/ProductSlice";
+import { getAllProducts, getAllProductsByUser, deleteProduct, addToCart } from "../store/product/ProductSlice";
 import { withRouter } from "../helper/withRouter";
 
 type Products = {
@@ -15,7 +15,6 @@ type Products = {
   
   type State = {
     productsData: Products[];
-    quantity: number; //test
   };
 
 class DashboardPage extends Component<any, State>{
@@ -24,40 +23,56 @@ class DashboardPage extends Component<any, State>{
     
         this.state = {
             productsData: [],
-            quantity:0 //test
         };
     }
+
+    params = "";
+    dataProduct = {};
+    dataCategory = {};
+    sellerDashboard = false;
     
     componentDidMount() {
         this.getData();
     }
 
-    // componentDidUpdate(prevProps: any) {
-    //     console.log(this.props.dataProps.data.length);
-    //     console.log(prevProps.dataProps.data.length);
-    //     // if (this.props.dataProps.data.length !== prevProps.dataProps.data.length) {
-    //     //     this.getData();
-    //     // }
-    //     if (prevProps.dataProps.data.length !== this.props.dataProps.data.length) {
-    //         console.log('pokemons state has changed.');
-    //         this.getData();
-    //       }
-    // }
+    componentDidUpdate(prevProps: any) {
+        const { params } = this.props.router;
+        const prevParams = prevProps.router.params;
+    
+        if (params !== prevParams) {
+          this.getData();
+        }
+      }
     
     getData = async () => {
-        this.props.getAllProducts()
-        .then(() => {
-            // this.dataProps = this.props;
-            const { dataProps } = this.props;
-            // this.dataProduct = this.props.dataProps.data;
-            // console.log(dataProps);
-            // const data = dataProduct.data;
+        this.params = this.props.router.params;
+        this.sellerDashboard = Object.keys(this.params).length > 0;
 
-            this.setState({ 
-                productsData: dataProps.data
-             });
-          });
+        if (this.sellerDashboard) {
+            this.props.getAllProductsByUser()
+            .then(() => {
+                const { dataProps } = this.props;
+
+                this.setState({ 
+                    productsData: dataProps.data,
+                });
+            });
+        } else {
+            this.props.getAllProducts()
+            .then(() => {
+                // this.dataProps = this.props;
+                const { dataProps } = this.props;
+                // this.dataProduct = this.props.dataProps.data;
+                // console.log(dataProps);
+                // const data = dataProduct.data;
+
+                this.setState({ 
+                    productsData: dataProps.data
+                });
+            });
+        }
     }
+
     editProductById = async (productId: string) => {
         this.props.router.navigate(`/product-page/${productId}`);
     }
@@ -82,14 +97,14 @@ class DashboardPage extends Component<any, State>{
         // const data = dataProps.data;
         // console.log(dataProps)
 
-        const { userProps } = this.props;
-        const role = userProps.data.user.role;
-        const isAdmin = role === 'Admin';
+        // const { userProps } = this.props;
+        // const role = userProps.data.user.role;
+        // const isAdmin = role === 'Admin';
 
         return (
             <div className="text-gray-600 font-body">
                 <Navbar />
-                {isAdmin ? (
+                {this.sellerDashboard ? (
                     <div className="flex p-3">
                         <Link
                             to={"/product-page"}
@@ -142,7 +157,7 @@ class DashboardPage extends Component<any, State>{
                                                 <p className="text-gray-700 text-base">{product.price} : {product.stock} pcs</p>
                                             </div>
                                         </Link>
-                                        {isAdmin ? (
+                                        {this.sellerDashboard ? (
                                             <div className="flex">
                                                 <button
                                                     className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
@@ -177,6 +192,7 @@ const mapStateToProps = (state: any) => ({
   
   const mapDispatchToProps = {
     getAllProducts, 
+    getAllProductsByUser,
     deleteProduct,
     addToCart
   };

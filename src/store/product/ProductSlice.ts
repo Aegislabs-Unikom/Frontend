@@ -41,6 +41,22 @@ export const getAllProducts = createAsyncThunk('product/getAllProduct', async ()
     }
   });
 
+  export const getAllProductsByUser = createAsyncThunk('product/getAllProductByUser', async () => {
+    try {
+        const response = await axios.get(`${baseURL}/api/products/byuser`,{withCredentials : true});
+
+        if (response.status === 200) {
+            console.log(response.data.msg);
+            return response.data;
+        } else {
+            throw new Error("Request failed with status: " + response.status);
+        }
+    } catch (error: any) {
+      console.log("ini error");
+      throw error.response;
+    }
+  });
+
 export const getProductById = createAsyncThunk('product/getProductById',
 async ({ id }: { id: string}) => {
   try {
@@ -201,6 +217,11 @@ const productSlice = createSlice({
     })
     .addCase(getAllProducts.rejected, (state, action) => {
       state.error = "true";
+    })
+    .addCase(getAllProductsByUser.fulfilled, (state, action) => {
+      state.data = action.payload.data;
+      state.error = action.payload.error;
+      state.msg = action.payload.msg;
     })
     .addCase(getProductById.fulfilled, (state, action) => {
       state.data = action.payload.data;
