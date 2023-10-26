@@ -7,6 +7,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ProductPage from './pages/ProductPage';
 import DetailPage from './pages/DetailPage';
 import CartPage from './pages/CartPage';
+import PrivateRoute from './helper/PrivateRoute';
 
 class App extends Component {
   render(){
@@ -16,14 +17,14 @@ class App extends Component {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/product">
-            <Route path=":id" element={<DetailPage />} />
+            <Route path=":id" element={<PrivateRoute component={DetailPage}/>}/>
           </Route>
-          <Route path="/product-page" element={<ProductPage />} >
-            <Route path=":id" element={<ProductPage />} />
+          <Route path="/product-page" element={<PrivateRoute component={ProductPage}/>}>
+            <Route path=":id" element={<PrivateRoute component={ProductPage}/>}/>
           </Route>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<PrivateRoute component={DashboardPage}/>} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
-          <Route path="/cart" element={<CartPage />} />
+          <Route path="/cart" element={<PrivateRoute component={CartPage}/>}/>
         </Routes>
       </BrowserRouter>
     );

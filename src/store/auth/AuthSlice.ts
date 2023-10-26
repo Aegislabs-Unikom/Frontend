@@ -106,8 +106,11 @@ async ({ otp }: { otp: string }) => {
 
 export const logoutAsync = createAsyncThunk('auth/logout', async () => {
   try {
-    await axios.delete(`${baseURL}/api/user/logout`,{withCredentials : true});
+    const response = await axios.delete(`${baseURL}/api/user/logout`,{withCredentials : true});
+    console.log(response.data);
+    
     console.log("sip logout");
+    return response.data;
   } catch (error) {
     console.log("ini error");
     throw error;
@@ -130,6 +133,13 @@ const authSlice = createSlice({
     })
     .addCase(loginAsync.rejected, (state, action) => {
       state.error = "true";
+    })
+    .addCase(logoutAsync.fulfilled, (state, action) => {
+      console.log("sampe sini");
+      state.data = action.payload.data;
+      state.error = action.payload.error;
+      state.msg = action.payload.msg;
+      console.log(action.payload.msg);
     })
   },
 });
