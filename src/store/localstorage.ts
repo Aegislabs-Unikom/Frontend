@@ -4,7 +4,6 @@ export const loadState = () => {
         if (serializedState === null) {
             return undefined;
         }
-        console.log("ini load "+serializedState);
         return JSON.parse(serializedState);
     } catch (err) {
         return undefined;
