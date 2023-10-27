@@ -98,7 +98,7 @@ class DetailPage extends Component<any, ProductState> {
     // const data = this.dataProps.data;
 
     return (
-        <section className="text-gray-700 body-font overflow-hidden bg-primary h-screen">
+        <section className="text-gray-700 body-font overflow-hidden bg-primary min-h-screen">
             <Navbar />
             <div className="container px-5 py-24 mx-auto">
                 <div className="lg:w-4/5 mx-auto flex flex-wrap">
