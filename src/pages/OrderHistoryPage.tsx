@@ -63,8 +63,8 @@ class OrderHistoryPage extends Component<any, State>{
         const cartIsNull = this.state.orderHistory.length === 0;
 
         return (
-            <div className="text-gray-600 font-body">
-                <Navbar />
+            <div className="text-gray-600 font-body bg-secondary min-h-screen">
+            <Navbar />
                 <div className="max-w-2xl mx-auto p-4 mt-16">
                     <h1 className="text-2xl font-semibold mb-4">Order History</h1>
                     {cartIsNull? (
