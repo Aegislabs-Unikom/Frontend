@@ -194,7 +194,7 @@ const mapStateToProps = (state: any) => ({
     getAllProducts, 
     getAllProductsByUser,
     deleteProduct,
-    addToCart
+    addToCart,
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(DashboardPage));
