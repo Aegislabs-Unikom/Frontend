@@ -38,30 +38,35 @@ class VerifyOTP extends Component<any, verifState> {
 
   render() {
     return (
-        <section className="bg-gray-100">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
+        <section className="bg-primary ">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto min-h-screen lg:py-0 text-white">
+                <div className="w-full bg-secondary rounded-lg md:mt-0 sm:max-w-md xl:p-0 relative">
+                    <Link to={`/`} className="flex justify-center">
+                        <span className="absolute text-white font-bold text-3xl tracking-widest uppercase mb-7 bottom-[100%]">Shopnest</span>
+                    </Link>
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl ">
-                            Check your email and input the verification code
+                        <h1 className="text-xl font-semibold leading-tight tracking-wide text-center uppercase text-gray-1000 md:text-2xl ">
+                            Verification Code <br/> Check your email!
                         </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit}>
+                        <form className="space-y-4 md:space-y-10" onSubmit={this.handleFormSubmit}>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Verification Code</label>
+                                <label  className="block mb-2 text-sm font-medium text-gray-300 ">Verification Code</label>
                                 <input type="text"
-                                    name="email"
+                                    name="otp"
                                     value={this.state.otp}
                                     onChange={(e) => this.setState({ otp: e.target.value })}
-                                    className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
+                                    className="bg-secondary border px-5 sm:text-sm rounded-lg  focus:border-primary-600 block w-full py-2.5" placeholder="Enter verification code" />
                             </div>
-                            <button type="submit" className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500">Login</button>
-                            <p className="text-sm font-light text-black dark:text-gray-800">
-                              Already have an account?  
-                              <Link to={'/login'}
-                                className="font-medium text-blue hover:underline dark:text-blue-500 ml-1">
-                                 Login
-                              </Link>
-                            </p>
+                            <div className="flex flex-col items-center gap-4">
+                              <button type="submit" className="px-10 font-bold btn py-1.5 bg-primary duration-500 rounded-md text-secondary">Login</button>
+                              <p className="text-sm font-light text-gray-300">
+                                Already have an account?  
+                                <Link to={'/login'}
+                                  className="font-medium hover:underline text-primary ml-1">
+                                   Login
+                                </Link>
+                              </p>
+                            </div>
                         </form>
                     </div>
                 </div>

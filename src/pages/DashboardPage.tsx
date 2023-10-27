@@ -100,13 +100,13 @@ class DashboardPage extends Component<any, State>{
         // startIdx = (this.state.currentPage - 1) * this.state.perPage;
         // endIdx = this.startIdx + this.state.perPage;
         return (
-            <div className="text-gray-600 font-body">
+            <div className="text-gray-600 font-body bg-secondary min-h-screen">
                 <Navbar />
                 {this.sellerDashboard ? (
-                    <div className="flex p-3">
+                    <div className="flex p-3 md:ml-14">
                         <Link
                             to={"/product-page"}
-                            className="m-3 lg:w-[15%] text-sm flex items-center w-[50%] px-5 py-2 font-bold text-white rounded-lg mb-8 lg:px-5 lg:py-2 md:text-base bg-blue-400 hover:opacity-80 hover:shadow-lg transition duration-500"
+                            className="m-3 lg:w-[15%] shadow-inner-xl hover:opacity-80 text-sm flex items-center w-[50%] px-5 py-2 font-bold text-secondary rounded-lg mb-8 lg:px-5 lg:py-2 md:text-base bg-primary transition duration-500"
                         >
                             <span className="fill-current mr-3">
                                 <svg
@@ -122,7 +122,7 @@ class DashboardPage extends Component<any, State>{
                         </Link>
                         <Link
                             to={"/category"}
-                            className="m-3 lg:w-[15%] text-sm flex items-center w-[50%] px-5 py-2 font-bold text-white rounded-lg mb-8 lg:px-5 lg:py-2 md:text-base bg-blue-400 hover:opacity-80 hover:shadow-lg transition duration-500"
+                            className="m-3 lg:w-[15%] shadow-inner-xl hover:opacity-80 text-sm flex items-center w-[50%] px-5 py-2 font-bold text-secondary rounded-lg mb-8 lg:px-5 lg:py-2 md:text-base bg-primary transition duration-500"
                         >
                             <span className="fill-current mr-3">
                                 <svg
@@ -141,31 +141,39 @@ class DashboardPage extends Component<any, State>{
                         <div className="mb-16"></div>
                     )}
                 <div className=" w-11/12 m-auto">
-                    <div className="grid lg:grid-cols-5">
+                    <div className="grid place-items-center md:grid-cols-2 lg:grid-cols-4 gap-x-6">
                         {this.state.productsData.slice(startIdx, endIdx).map((product:any) => {
                             return ( 
-                            <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
-                                    <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
+                            <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4 text-secondary group">
+                                    <div className="m-auto flex flex-col justify-between h-96 bg-primary border-gray-400 rounded-lg p-4 leading-normal shadow-inner-xl">
                                         <Link
-                                            to={`/product/${product._id}`}>
-                                            <div className="mb-3">
-                                                <img src={product.image} alt="" className="max-h-56 m-auto"/>
-                                                <p className="text-gray-700 text-base mt-2">{product.nama_produk}</p>
-                                                <p className="text-gray-700 text-base mt-1">{product.description}</p>
-                                                <p className="text-gray-700 text-base">Rp. {product.price}</p>
-                                                <p className="text-gray-700 text-base">{product.stock} pcs</p>
+                                            to={`/product/${product._id}`}
+                                            className="h-full"
+                                            >
+                                            <div className="mb-3 flex flex-col">
+                                                <div className="h-40 overflow-clip">
+                                                  <img src={product.image} alt="" className="h-full w-full object-cover transform duration-200 group-hover:scale-110"/>
+                                                </div>
+                                                <div>
+                                                  <div className="flex justify-center my-2">
+                                                    <p className="text-base mt-2 font-bold">{product.nama_produk}</p>
+                                                  </div>
+                                                  <p className="text-sm font-semibold">{product.description}</p>
+                                                  <p className="text-sm font-semibold">Rp.{product.price}</p>
+                                                  <p className="text-sm font-semibold text-gray-500">{product.stock} pcs</p>
+                                                </div>
                                             </div>
                                         </Link>
                                         {this.sellerDashboard ? (
-                                            <div className="flex">
+                                            <div className="flex justify-between gap-5">
                                                 <button
-                                                    className="mr-2 border-2 rounded-lg bg-white hover border-gray-500 hover:bg-gray-500 text-gray-500 hover:text-white flex items-center justify-center w-1/4 h-9"
+                                                    className="mr-2 w-1/2 shadow-xl rounded-xl bg-secondary hover:bg-[#333333] text-gray-400 font-semibold flex items-center justify-center h-9"
                                                     onClick={() => this.editProductById(product._id)}
-                                                    > edit
+                                                    > Edit
                                                 </button>
                                                 <button
-                                                    className="border-2 rounded-lg bg-white hover border-red-500 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center w-1/3 h-9 p-2"
-                                                    onClick={() => this.deleteProductById(product._id)}>delete
+                                                    className="shadow-xl w-1/2 rounded-xl bg-secondary hover:bg-[#333333] text-gray-400 font-semibold flex items-center justify-center h-9 p-2"
+                                                    onClick={() => this.deleteProductById(product._id)}>Delete
                                                 </button>
                                             </div>
                                         ):(
