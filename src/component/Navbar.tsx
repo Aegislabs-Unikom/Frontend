@@ -68,19 +68,23 @@ class Navbar extends Component<any, NavbarState> {
                     <button
                         onClick={this.handleButtonClick}
                         className="text-white hover:text-blue-300 focus:outline-none w-15 mr-3">
-                        <img
-                        className="h-9 w-9 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                        />
+                        <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                            <svg className="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>
+                        </div>
                     </button>
                 {open && (
                     <div className="absolute z-10 mt-2 space-y-2 bg-white text-black rounded-lg shadow-lg">
-                        <Link to={`/`}>
+                        <Link to={`/seller`}>
                             <p className="block px-4 py-2 hover:bg-blue-100">
-                            Profile
+                            Seller Dashboard
                             </p>
                         </Link>
+                        <Link to={`/orderHistory`}>
+                            <p className="block px-4 py-2 hover:bg-blue-100">
+                            Order History
+                            </p>
+                        </Link>
+                        
                             <span className="block px-4 py-2 hover:bg-blue-100" onClick={this.logoutClicked}>
                                 Logout
                             </span>
