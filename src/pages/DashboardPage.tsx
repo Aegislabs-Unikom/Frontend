@@ -2,7 +2,7 @@ import Navbar from "../component/Navbar";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
-import { getAllProducts, deleteProduct, addToCart } from "../store/product/ProductSlice";
+import { getAllProducts, getAllProductsByUser, deleteProduct, addToCart } from "../store/product/ProductSlice";
 import { withRouter } from "../helper/withRouter";
 
 type Products = {
@@ -15,7 +15,8 @@ type Products = {
   
   type State = {
     productsData: Products[];
-    quantity: number; //test
+    currentPage: number;
+    perPage: number;
   };
 
 class DashboardPage extends Component<any, State>{
@@ -24,40 +25,56 @@ class DashboardPage extends Component<any, State>{
     
         this.state = {
             productsData: [],
-            quantity:0 //test
+            currentPage: 1,
+            perPage: 20,
         };
     }
+
+    params = "";
+    dataProduct = {};
+    dataCategory = {};
+    sellerDashboard = false;
     
     componentDidMount() {
         this.getData();
     }
 
-    // componentDidUpdate(prevProps: any) {
-    //     console.log(this.props.dataProps.data.length);
-    //     console.log(prevProps.dataProps.data.length);
-    //     // if (this.props.dataProps.data.length !== prevProps.dataProps.data.length) {
-    //     //     this.getData();
-    //     // }
-    //     if (prevProps.dataProps.data.length !== this.props.dataProps.data.length) {
-    //         console.log('pokemons state has changed.');
-    //         this.getData();
-    //       }
-    // }
+    componentDidUpdate(prevProps: any) {
+        const { params } = this.props.router;
+        const prevParams = prevProps.router.params;
+    
+        if (params !== prevParams) {
+          this.getData();
+        }
+      }
     
     getData = async () => {
-        this.props.getAllProducts()
-        .then(() => {
-            // this.dataProps = this.props;
-            const { dataProps } = this.props;
-            // this.dataProduct = this.props.dataProps.data;
-            // console.log(dataProps);
-            // const data = dataProduct.data;
+        this.params = this.props.router.params;
+        this.sellerDashboard = Object.keys(this.params).length > 0;
 
-            this.setState({ 
-                productsData: dataProps.data
-             });
-          });
+        if (this.sellerDashboard) {
+            this.props.getAllProductsByUser()
+            .then(() => {
+                const { dataProps } = this.props;
+
+                this.setState({ 
+                    productsData: dataProps.data,
+                    currentPage: 1,
+                });
+            });
+        } else {
+            this.props.getAllProducts()
+            .then(() => {
+                const { dataProps } = this.props;
+
+                this.setState({ 
+                    productsData: dataProps.data,
+                    currentPage: 1,
+                });
+            });
+        }
     }
+
     editProductById = async (productId: string) => {
         this.props.router.navigate(`/product-page/${productId}`);
     }
@@ -65,7 +82,6 @@ class DashboardPage extends Component<any, State>{
     deleteProductById = async (productId: string) => {
         const confirm = window.confirm('Delete this product?');
         if (confirm) {
-            console.log(productId);
             await this.props.deleteProduct({ id: productId })
                 .then(()=>{
                     this.getData();
@@ -78,18 +94,15 @@ class DashboardPage extends Component<any, State>{
     }
 
     render(){
-        // const { dataProps } = this.props;
-        // const data = dataProps.data;
-        // console.log(dataProps)
+        const startIdx = (this.state.currentPage - 1) * this.state.perPage;
+        const endIdx = Math.min(startIdx + this.state.perPage, this.state.productsData.length);
 
-        const { userProps } = this.props;
-        const role = userProps.data.user.role;
-        const isAdmin = role === 'Admin';
-
+        // startIdx = (this.state.currentPage - 1) * this.state.perPage;
+        // endIdx = this.startIdx + this.state.perPage;
         return (
             <div className="text-gray-600 font-body bg-secondary min-h-screen">
                 <Navbar />
-                {isAdmin ? (
+                {this.sellerDashboard ? (
                     <div className="flex p-3 md:ml-14">
                         <Link
                             to={"/product-page"}
@@ -129,8 +142,8 @@ class DashboardPage extends Component<any, State>{
                     )}
                 <div className=" w-11/12 m-auto">
                     <div className="grid place-items-center md:grid-cols-2 lg:grid-cols-4 gap-x-6">
-                        {this.state.productsData.map((product:any) => {
-                            return ( //buat komponen terpisah
+                        {this.state.productsData.slice(startIdx, endIdx).map((product:any) => {
+                            return ( 
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4 text-secondary group">
                                     <div className="m-auto flex flex-col justify-between h-96 bg-primary border-gray-400 rounded-lg p-4 leading-normal shadow-inner-xl">
                                         <Link
@@ -151,7 +164,7 @@ class DashboardPage extends Component<any, State>{
                                                 </div>
                                             </div>
                                         </Link>
-                                        {isAdmin ? (
+                                        {this.sellerDashboard ? (
                                             <div className="flex justify-between gap-5">
                                                 <button
                                                     className="mr-2 w-1/2 shadow-xl rounded-xl bg-secondary hover:bg-[#333333] text-gray-400 font-semibold flex items-center justify-center h-9"
@@ -172,6 +185,20 @@ class DashboardPage extends Component<any, State>{
                             )
                         })}
                     </div>
+                    <div className="flex justify-center my-10">
+                            <button
+                                className="bg-gray-700 hover:bg-gray-400 text-white font-bold py-2 px-4 border border-blue-700 rounded ml-2"
+                                disabled={this.state.currentPage === 1}
+                                onClick={() => this.setState({ currentPage: this.state.currentPage - 1})}>
+                                Previous
+                            </button>
+                            <button
+                                className="bg-gray-700 hover:bg-gray-400 text-white font-bold py-2 px-4 border border-blue-700 rounded ml-2"
+                                disabled={endIdx >= this.state.productsData.length}
+                                onClick={() => this.setState({currentPage: this.state.currentPage + 1})}>
+                                Next
+                            </button>
+                    </div>
                 </div>
                 
             </div>
@@ -186,8 +213,9 @@ const mapStateToProps = (state: any) => ({
   
   const mapDispatchToProps = {
     getAllProducts, 
+    getAllProductsByUser,
     deleteProduct,
-    addToCart
+    addToCart,
   };
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(DashboardPage));

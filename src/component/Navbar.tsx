@@ -61,7 +61,7 @@ class Navbar extends Component<any, NavbarState> {
             
             <div className="md:flex items-center hidden">
                 <span className='text-white mr-5'>
-                    {userProps.data.user.nama}
+                    {userProps?.data?.user?.nama}
                 </span>
             
                 <div className="relative group">

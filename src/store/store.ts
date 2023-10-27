@@ -5,6 +5,7 @@ import ProductSlice from './product/ProductSlice';
 import CategorySlice from './category/CategorySlice';
 import CartSlice from './cart/CartSlice';
 import PaymentSlice from './paymentOrder/PaymentSlice';
+import OrderSlice from './paymentOrder/OrderSlice';
 
 const persistedState = loadState();
 const store = configureStore({
@@ -14,11 +15,12 @@ const store = configureStore({
     category: CategorySlice,
     cart: CartSlice,
     payment: PaymentSlice,
+    orderHistory: OrderSlice
   },
   preloadedState: persistedState
 });
 
-store.subscribe(() => {
+store.subscribe(() => { //untuk save state ke local storage
   saveState({
     auth: store.getState().auth,
     // products: store.getState().products
