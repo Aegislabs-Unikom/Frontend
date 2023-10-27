@@ -162,7 +162,8 @@ class DashboardPage extends Component<any, State>{
                                                 <img src={product.image} alt="" className="max-h-56 m-auto"/>
                                                 <p className="text-gray-700 text-base mt-2">{product.nama_produk}</p>
                                                 <p className="text-gray-700 text-base mt-1">{product.description}</p>
-                                                <p className="text-gray-700 text-base">{product.price} : {product.stock} pcs</p>
+                                                <p className="text-gray-700 text-base">Rp. {product.price} : {product.stock} pcs</p>
+                                                <p className="text-gray-700 text-base">{product.stock} pcs</p>
                                             </div>
                                         </Link>
                                         {this.sellerDashboard ? (
