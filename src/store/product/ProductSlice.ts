@@ -30,7 +30,6 @@ export const getAllProducts = createAsyncThunk('product/getAllProduct', async ()
         const response = await axios.get(`${baseURL}/api/products`,{withCredentials : true});
 
         if (response.status === 200) {
-            console.log(response.data.msg);
             return response.data;
         } else {
             throw new Error("Request failed with status: " + response.status);
@@ -46,7 +45,6 @@ export const getAllProducts = createAsyncThunk('product/getAllProduct', async ()
         const response = await axios.get(`${baseURL}/api/products/byuser`,{withCredentials : true});
 
         if (response.status === 200) {
-            console.log(response.data.msg);
             return response.data;
         } else {
             throw new Error("Request failed with status: " + response.status);
@@ -69,7 +67,6 @@ async ({ id }: { id: string}) => {
     
 
     if (response.status === 200) {
-      console.log(response.data.msg);
       return response.data;
     } else {
       throw new Error("Request failed with status: " + response.status);
@@ -84,7 +81,7 @@ export const addNewProduct = createAsyncThunk('product/addNewProduct',
 async ({ nama_produk, description, price, stock, images, category_id  }: { nama_produk: string, description: string, price: number, stock: number, images: string, category_id: string }) => {
   try {
     const formData = new FormData();
-    console.log(images[0]);
+    // console.log(images[0]);
     formData.append("images", images[0]);
     formData.append("nama_produk", nama_produk);
     formData.append("description", description);
@@ -101,7 +98,7 @@ async ({ nama_produk, description, price, stock, images, category_id  }: { nama_
         },
     });
     
-    console.log(response.data.msg);
+    // console.log(response.data.msg);
     return response.data;
   } catch (error: any) {
     return console.log(error.response);
@@ -136,7 +133,7 @@ async ({ nama_produk, description, price, stock, images, category_id, id }: { na
         },
     });
     
-    console.log(response.data.msg);
+    // console.log(response.data.msg);
     return response.data;
   } catch (error:any) {
     return console.log(error.response);
@@ -146,11 +143,9 @@ async ({ nama_produk, description, price, stock, images, category_id, id }: { na
 export const deleteProduct = createAsyncThunk('product/deleteProduct',
 async ({ id }: { id: string}) => {
   try {
-    console.log(id);
     const response = await axios.delete(`${baseURL}/api/products/${id}`, {withCredentials : true});
 
     if (response.status === 200) {
-      console.log(response.data.msg);
       return response.data;
     } else {
       throw new Error("Request failed with status: " + response.status);
@@ -164,8 +159,6 @@ async ({ id }: { id: string}) => {
 export const addToCart = createAsyncThunk('product/addToCart',
 async ({ quantity, id }: { quantity: number, id: string}) => {
   try {
-    console.log(id);
-    console.log(quantity);
     const response = await axios.post(`${baseURL}/api/cart/${id}`, 
     {quantity}, 
     {
@@ -173,9 +166,7 @@ async ({ quantity, id }: { quantity: number, id: string}) => {
     });
 
     if (response.status === 200) {
-      console.log(response.data.msg);
-      console.log(response.data);
-
+      alert("Berhasil menambahkan produk ke keranjang")
       return response.data;
     } else {
       throw new Error("Request failed with status: " + response.status);
@@ -191,8 +182,6 @@ export const getAllCart = createAsyncThunk('product/getAllCart', async () => {
       const response = await axios.get(`${baseURL}/api/cart`,{withCredentials : true});
 
       if (response.status === 200) {
-          console.log(response.data.msg);
-          console.log(response.data);
           return response.data;
       } else {
           throw new Error("Request failed with status: " + response.status);

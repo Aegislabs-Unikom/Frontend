@@ -18,11 +18,7 @@ type Products = {
     currentPage: number;
     perPage: number;
   };
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [perPage] = useState(6); //total perpage
 
-//   const startIdx = (currentPage - 1) * perPage;
-//   const endIdx = startIdx + perPage;
 class DashboardPage extends Component<any, State>{
     constructor(props: {}) {
         super(props);
@@ -69,11 +65,7 @@ class DashboardPage extends Component<any, State>{
         } else {
             this.props.getAllProducts()
             .then(() => {
-                // this.dataProps = this.props;
                 const { dataProps } = this.props;
-                // this.dataProduct = this.props.dataProps.data;
-                // console.log(dataProps);
-                // const data = dataProduct.data;
 
                 this.setState({ 
                     productsData: dataProps.data,
@@ -90,7 +82,6 @@ class DashboardPage extends Component<any, State>{
     deleteProductById = async (productId: string) => {
         const confirm = window.confirm('Delete this product?');
         if (confirm) {
-            console.log(productId);
             await this.props.deleteProduct({ id: productId })
                 .then(()=>{
                     this.getData();
@@ -151,9 +142,8 @@ class DashboardPage extends Component<any, State>{
                     )}
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                    {/* {searchResults.slice(startIdx, endIdx).map((meal: any) => (  */}
                         {this.state.productsData.slice(startIdx, endIdx).map((product:any) => {
-                            return ( //buat komponen terpisah
+                            return ( 
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
                                         <Link

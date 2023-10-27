@@ -139,7 +139,6 @@ class CartPage extends Component<any, State>{
         })
         .then((response: any) => {
           const cekInfoPengiriman = response.payload;
-          // console.log(cekInfoPengiriman);
           this.setState({
             biayaOngkir: cekInfoPengiriman.cost[0].value,
           })
@@ -207,11 +206,7 @@ class CartPage extends Component<any, State>{
       try{
         this.props.getAllCart()
         .then(() => {
-          // this.dataProps = this.props;
           const { cartProps } = this.props;
-          // this.dataProduct = this.props.dataProps.data;
-          // console.log(cartProps.data);
-          // const data = dataProduct.data;
 
           this.setState({ 
               productsData: cartProps.data
@@ -221,7 +216,7 @@ class CartPage extends Component<any, State>{
         console.error(error);
       } finally {
         this.setState({ loading: false }, () => {
-          console.log("Token load:", this.state.loading); // Log the updated value.
+          // console.log("Token load:", this.state.loading); 
         });
       }
     }
@@ -233,7 +228,6 @@ class CartPage extends Component<any, State>{
     deleteProductById = async (productId: string) => {
         const confirm = window.confirm('Delete this product?');
         if (confirm) {
-            console.log(productId);
             await this.props.deleteProduct({ id: productId })
                 .then(()=>{
                     this.getData();
@@ -250,14 +244,8 @@ class CartPage extends Component<any, State>{
           const result = await this.props.processCartToPayment({biayaOngkir: this.state.biayaOngkir});
           const token = result.payload.token;
           const orderId = result.payload.order_id;
-          // this.setState({ token }, () => {
-          //   console.log("Token state:", this.state.token); // Log the updated value.
-          // });
           this.setState({token: token});
           this.setState({orderId: orderId});
-          // this.setState({ orderId }, () => {
-          //   console.log("orderId state:", this.state.orderId); // Log the updated value.
-          // });
         } catch (error) {
             console.error("Error processing payment:", error);
         }
@@ -272,28 +260,11 @@ class CartPage extends Component<any, State>{
         } catch (error) {
           console.error("Error processing payment:", error);
         }
-        // try {
-        //   const response = await axios.post(
-        //     `https://aegisquest-ernafpm2wq-uc.a.run.app/api/order/status`,
-        //     {
-        //       status: newStatus,
-        //     },
-        //     {
-        //       withCredentials: true,
-        //     }
-        //   );
-        //   console.log(response.data);
-        //   console.log(response.data.data);
-        //   alert(response.data.msg);
-        // } catch (error) {
-        //   console.error("Error processing payment:", error);
-        // }
     }    
 
     deleteProductInCart = async (productId: string) => {
       const confirm = window.confirm('Delete this product?');
       if (confirm) {
-          console.log(productId);
           await this.props.deleteProductInCart({ id: productId })
               .then(()=>{
                   this.getData();
@@ -305,21 +276,12 @@ class CartPage extends Component<any, State>{
   }
 
     render(){
-        // const { cartProps } = this.props;
-        // const data = cartProps.data;
-        // console.log(data);
-        // const amount = data.
-        // const grandTotal = 0;
         const cartIsNull = this.state.productsData.length === 0;
 
         const { userProps } = this.props;
         const role = userProps.data.user.role;
         const isAdmin = role === 'Admin';
 
-        // if (this.state.loading) {
-        //   console.log(this.state.loading);
-        //   return <p>Loading...</p>;
-        // }
 
         return (
             <div className="text-gray-600 font-body">
