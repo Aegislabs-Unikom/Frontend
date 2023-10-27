@@ -8,6 +8,7 @@ import ProductPage from './pages/ProductPage';
 import DetailPage from './pages/DetailPage';
 import CartPage from './pages/CartPage';
 import PrivateRoute from './helper/PrivateRoute';
+import AddCategory from './pages/AddCategory';
 
 class App extends Component {
   render(){
@@ -22,6 +23,7 @@ class App extends Component {
           <Route path="/product-page" element={<PrivateRoute component={ProductPage}/>}>
             <Route path=":id" element={<PrivateRoute component={ProductPage}/>}/>
           </Route>
+          <Route path="/category" element={<PrivateRoute component={AddCategory}/>}/>
           <Route path="/" element={<PrivateRoute component={DashboardPage}/>} />
           <Route path="/verifyOTP" element={<VerifyOTP />} />
           <Route path="/cart" element={<PrivateRoute component={CartPage}/>}/>

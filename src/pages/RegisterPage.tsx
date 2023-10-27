@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import { register } from "../store/auth/AuthSlice";
 import { withRouter } from "../helper/withRouter";
 
+import signUpImage from "../assets/images/signup.jpg"
+
 interface RegisterState {
     nama: string;
     email: string;
@@ -64,63 +66,68 @@ class Register extends Component<any, RegisterState> {
 
   render() {
     return (
-        <section className="bg-gray-100">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
+        <section className="bg-secondary min-h-screen flex flex-col justify-center md:justify-normal md:flex-row-reverse items-center md:pl-10">
+            <div className="hidden md:block">
+                <img src={signUpImage} alt="" className="object-cover w-full h-screen" />
+            </div>
+            <div className="flex flex-col items-center justify-center px-2 md:px-6 py-8 mx-auto lg:py-0 min-w-[22rem] md:min-w-[27rem]">
+                <div className="w-full rounded-lg md:mt-0 sm:max-w-md text-white xl:p-0 ">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl ">
-                            Sign Up
-                        </h1>
+                        <div className="flex flex-col items-center">
+                          <h1 className="uppercase text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl">
+                              Sign Up
+                          </h1>
+                        </div>
                         <form className="space-y-4 md:space-y-6" onSubmit={this.handleFormSubmit}>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Nama</label>
+                                <label  className="block mb-2 text-sm font-medium ">Nama</label>
                                 <input type="text"
                                     name="nama"
                                     value={this.state.nama}
                                     onChange={(e) => this.setState({ nama: e.target.value })}
-                                    className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
+                                    className="bg-secondary border px-5 sm:text-sm rounded-lg focus:border-primary-600 block w-full py-2.5" placeholder="Enter your name" />
                             </div>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Email</label>
+                                <label  className="block mb-2 text-sm font-medium ">Email</label>
                                 <input type="text"
                                     name="email"
                                     value={this.state.email}
                                     onChange={(e) => this.setState({ email: e.target.value })}
-                                    className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
+                                    className="bg-secondary border px-5 sm:text-sm rounded-lg focus:border-primary-600 block w-full py-2.5" placeholder="Enter your email" />
                             </div>
                             {/* <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Alamat</label>
+                                <label  className="block mb-2 text-sm font-medium ">Alamat</label>
                                 <input type="text"
                                     name="alamat"
                                     value={this.state.alamat}
                                     onChange={(e) => this.setState({ alamat: e.target.value })}
-                                    className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
+                                    className="bg-secondary border px-5 sm:text-sm rounded-lg  focus:border-primary-600 block w-full py-2.5" placeholder="username" />
                             </div> */}
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">No Handphone</label>
+                                <label  className="block mb-2 text-sm font-medium ">No Handphone</label>
                                 <input type="number"
                                     name="noHp"
                                     value={this.state.no_hp}
                                     onChange={(e) => this.setState({ no_hp: e.target.value })}
-                                    className="bg-gray-900 border text-gray-900 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" />
+                                    className="bg-secondary border px-5 sm:text-sm rounded-lg  focus:border-primary-600 block w-full py-2.5" placeholder="Enter your address" />
                             </div>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Password</label>
+                                <label  className="block mb-2 text-sm font-medium ">Password</label>
                                 <input type="password" 
                                     name="password" 
                                     value={this.state.password}
                                     onChange={(e) => this.setState({ password: e.target.value })}
-                                    placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    placeholder="••••••••" className="bg-secondary border px-5 sm:text-sm rounded-lg  focus:border-primary-600 block w-full py-2.5" />
                             </div>
                             <div>
-                                <label  className="block mb-2 text-sm font-medium text-gray-900 ">Konfirmasi Password</label>
+                                <label  className="block mb-2 text-sm font-medium ">Konfirmasi Password</label>
                                 <input type="password"
                                     name="confPassword" 
                                     value={this.state.confPassword}
                                     onChange={(e) => this.setState({ confPassword: e.target.value })}
-                                    placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    placeholder="••••••••" className="bg-secondary border px-5 sm:text-sm rounded-lg  focus:border-primary-600 block w-full py-2.5" />
                             </div>
-                            <button type="submit" className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500">Register</button>
+                            <button type="submit" className="font-medium w-full rounded-md bg-primary btn p-3 hover:bg-gray-600 text-secondary transition ease-out duration-500">Register</button>
                         </form>
                     </div>
                 </div>

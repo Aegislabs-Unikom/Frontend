@@ -53,10 +53,10 @@ class Navbar extends Component<any, NavbarState> {
     const cartTotal = cartProps.data.length;
 
     return (
-      <nav className="bg-gray-700 p-3">
+      <nav className="bg-secondary p-3">
         <div className="flex items-center justify-between w-50">
             <Link to={`/`}>
-                <div className="text-white font-semibold text-xl ml-10">e-commerce</div>
+                <div className="text-white font-bold text-xl ml-10 tracking-widest uppercase">Shopnest</div>
             </Link>
             
             <div className="md:flex items-center hidden">

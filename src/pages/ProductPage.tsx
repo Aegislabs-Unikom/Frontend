@@ -162,115 +162,120 @@ class ProductPage extends Component<any, ProductState> {
     const category = dataCategory.data;
 
     return (
-      <section className="bg-gray-100">
+      <section className="bg-primary">
         <Navbar />
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto min-h-screen lg:py-0">
+          <div className="w-full bg-primary rounded-lg md:mt-0 border border-secondary shadow-xl xl:max-w-[1000px] xl:p-0 relative">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-1000 md:text-2xl">
-                {this.hasParams? "Update" : "Add New "} Product
+              <h1 className="text-xl font-bold leading-tight uppercase tracking-tight text-gray-1000 md:text-2xl absolute bottom-[100%] mb-3">
+                {this.hasParams? "Update" : "Add New "} Products
               </h1>
               <form
-                className="space-y-4 md:space-y-6"
+                className="space-y-4 md:space-y-6 grid md:grid-cols-2 md:gap-5"
                 onSubmit={this.handleFormSubmit}
                 encType="multipart/form-data"
               >
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Nama Produk
-                  </label>
-                  <input
-                    type="text"
-                    name="nama_produk"
-                    value={this.state.nama_produk}
-                    onChange={(e) =>
-                      this.setState({ nama_produk: e.target.value })
-                    }
-                    className="sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Nama Produk"
-                  />
+                <div className="flex flex-col gap-3">
+                  <div className="">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Product Name
+                    </label>
+                    <input
+                      type="text"
+                      name="nama_produk"
+                      value={this.state.nama_produk}
+                      onChange={(e) =>
+                        this.setState({ nama_produk: e.target.value })
+                      }
+                      className="sm:text-sm rounded-lg focus:!shadow-lg focus:bg-[rgb(165,221,195)] transition-all duration-150 outline-none block w-full p-2.5 bg-primary text-secondary placeholder:text-secondary border border-secondary"
+                      placeholder="Product Name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={this.state.description}
+                      onChange={(e) =>
+                        this.setState({ description: e.target.value })
+                      }
+                      placeholder="Description"
+                      className="sm:text-sm rounded-lg focus:!shadow-lg focus:bg-[rgb(165,221,195)] transition-all duration-150 outline-none block w-full p-2.5 bg-primary text-secondary placeholder:text-secondary border border-secondary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Category
+                    </label>
+                    <select name="category" 
+                        className="sm:text-sm rounded-lg focus:!shadow-lg focus:bg-[rgb(165,221,195)] transition-all duration-150 outline-none block w-full p-2.5 bg-primary text-secondary placeholder:text-secondary border border-secondary"
+                        id="category"
+                        value={this.state.category_id}
+                        onChange={(e) => this.setState({ category_id: e.target.value })}
+                      >
+                      {category?.map((category:any) => {
+                        return (
+                          <option value={category._id} key={category._id}>{category.nama_category}</option>)
+                      })}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Description
-                  </label>
-                  <input
-                    type="text"
-                    name="description"
-                    value={this.state.description}
-                    onChange={(e) =>
-                      this.setState({ description: e.target.value })
-                    }
-                    placeholder="Description"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={this.state.price}
-                    onChange={(e) =>
-                      this.setState({ price: parseInt(e.target.value) })
-                    }
-                    placeholder="Price"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Stock
-                  </label>
-                  <input
-                    type="number"
-                    name="stock"
-                    value={this.state.stock}
-                    onChange={(e) =>
-                      this.setState({ stock: parseInt(e.target.value) })
-                    }
-                    placeholder="Stock"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-100 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Images
-                  </label>
-                  <input
-                    type="file"
-                    className="block w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400"
-                    id="images"
-                    name="images"
-                    // value={this.state.images}
-                    multiple
-                    onChange={this.handleImageChange}
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Category
-                  </label>
-                  <select name="category" 
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-300 dark:placeholder-white-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      id="category"
-                      value={this.state.category_id}
-                      onChange={(e) => this.setState({ category_id: e.target.value })}
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Images
+                    </label>
+                    <input
+                      type="file"
+                      className="block px-4 py-2 w-full text-sm text-white-900 border border-gray-300 rounded-lg cursor-pointer bg-white-50 dark:text-white-400 focus:outline-none dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      id="images"
+                      name="images"
+                      // value={this.state.images}
+                      multiple
+                      onChange={this.handleImageChange}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-900 ">
+                        Price
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={this.state.price}
+                        onChange={(e) =>
+                          this.setState({ price: parseInt(e.target.value) })
+                        }
+                        placeholder="Price"
+                        className="sm:text-sm rounded-lg focus:!shadow-lg focus:bg-[rgb(165,221,195)] transition-all duration-150 outline-none block w-full p-2.5 bg-primary text-secondary placeholder:text-secondary border border-secondary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-900">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={this.state.stock}
+                        onChange={(e) =>
+                          this.setState({ stock: parseInt(e.target.value) })
+                        }
+                        placeholder="Stock"
+                        className="sm:text-sm rounded-lg focus:!shadow-lg focus:bg-[rgb(165,221,195)] transition-all duration-150 outline-none block w-full p-2.5 bg-primary text-secondary placeholder:text-secondary border border-secondary"
+                      />
+                    </div>
+                  </div>
+                  <button
+                      type="submit"
+                      className="w-full btn p-3 border bg-primary hover:bg-[rgb(165,221,195)] hover:shadow-md text-secondary rounded-md border-secondary transition ease-out duration-150"
                     >
-                    {category?.map((category:any) => {
-                      return (
-                        <option value={category._id} key={category._id}>{category.nama_category}</option>)
-                    })}
-                  </select>
+                      {this.hasParams? "Update" : "Add New "} produk
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full btn p-3 md:border-2 hover:bg-gray-600 bg-gray-500 text-white transition ease-out duration-500"
-                >
-                  {this.hasParams? "Update" : "Add New "} produk
-                </button>
               </form>
             </div>
           </div>
