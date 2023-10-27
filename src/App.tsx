@@ -23,7 +23,7 @@ class App extends Component {
           <Route path="/product-page" element={<PrivateRoute component={ProductPage}/>}>
             <Route path=":id" element={<PrivateRoute component={ProductPage}/>}/>
           </Route>
-          <Route path="/" element={<PrivateRoute component={DashboardPage}/>} >
+          <Route path="/" element={<DashboardPage />} >
             <Route path=":seller" element={<PrivateRoute component={DashboardPage}/>} />
           </Route>
           <Route path="/verifyOTP" element={<VerifyOTP />} />

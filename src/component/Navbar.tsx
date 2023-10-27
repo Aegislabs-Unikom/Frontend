@@ -56,12 +56,12 @@ class Navbar extends Component<any, NavbarState> {
       <nav className="bg-gray-700 p-3">
         <div className="flex items-center justify-between w-50">
             <Link to={`/`}>
-                <div className="text-white font-semibold text-xl ml-10">e-commerce</div>
+                <div className="text-white font-semibold text-xl ml-10">tokoKita</div>
             </Link>
             
             <div className="md:flex items-center hidden">
                 <span className='text-white mr-5'>
-                    {userProps.data.user.nama}
+                    {userProps?.data?.user?.nama}
                 </span>
             
                 <div className="relative group">
