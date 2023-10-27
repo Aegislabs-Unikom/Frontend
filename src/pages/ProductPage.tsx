@@ -37,19 +37,14 @@ class ProductPage extends Component<any, ProductState> {
   componentDidMount() {
     this.params = this.props.router.params;
     this.hasParams = Object.keys(this.params).length > 0;
-    console.log(this.hasParams);
       
       if (this.hasParams) {
         try {
           this.props
             .getProductById(this.params)
             .then(() => {
-              // this.dataProps = this.props;
               const { dataProps } = this.props;
               const data = dataProps.data;
-              // this.dataProduct = this.props.dataProps.data;
-              // console.log(this.dataProduct);
-              // const data = dataProduct.data;
               this.setState({ 
                 nama_produk: data.nama_produk,
                 description: data.description,
@@ -58,7 +53,6 @@ class ProductPage extends Component<any, ProductState> {
                 images: data.images,
                 category_id: data.category_id,
                })
-               console.log(this.state.images)
               this.getAllCategory();
             })
             .catch((error: any) => {
@@ -89,27 +83,20 @@ class ProductPage extends Component<any, ProductState> {
 
   handleFormSubmit = (e: FormEvent) => {
     if (this.hasParams) {
-      console.log(this.hasParams);
       this.updateProduct(e);
     } else {
-      console.log(this.hasParams);
       this.addNewProduct(e);
     }
   };
 
   addNewProduct = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("tambah");
     try {
       const { nama_produk, description, price, stock, images, category_id } = this.state;
       this.props //dispatch 
         .addNewProduct({ nama_produk, description, price, stock, images, category_id })
         .then((params: any) => { // Use an arrow function here
-          this.params = params.payload.data._id;
-          // console.log("ini params");
-          // console.log(this.params);
-          console.log(this.params);       
-          // console.log(params.payload.data);     
+          this.params = params.payload.data._id;   
           this.props.router.navigate(`/product/${params.payload.data._id}`);
         })
         .catch((error: any) => {
@@ -122,20 +109,14 @@ class ProductPage extends Component<any, ProductState> {
 
   updateProduct = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("update");
     try {
       const objectId = this.params;
       const id = Object.values(objectId);
       const { nama_produk, description, price, stock, images, category_id } = this.state;
-      console.log(id);
       this.props //dispatch 
         .updateProduct({ nama_produk, description, price, stock, images, category_id, id })
-        .then((params: any) => { // Use an arrow function here
+        .then((params: any) => { 
           this.params = params.payload.data._id;
-          // console.log("ini params");
-          // console.log(this.params);
-          console.log(this.params);       
-          // console.log(params.payload.data);     
           this.props.router.navigate(`/product/${params.payload.data._id}`);
         })
         .catch((error: any) => {
@@ -155,9 +136,6 @@ class ProductPage extends Component<any, ProductState> {
   };
 
   render() {
-    // const { dataProps } = this.props;
-    // const data = dataProps.data;
-
     const { dataCategory } = this.props;
     const category = dataCategory.data;
 
