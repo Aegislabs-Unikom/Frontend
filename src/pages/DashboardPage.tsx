@@ -15,14 +15,22 @@ type Products = {
   
   type State = {
     productsData: Products[];
+    currentPage: number;
+    perPage: number;
   };
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [perPage] = useState(6); //total perpage
 
+//   const startIdx = (currentPage - 1) * perPage;
+//   const endIdx = startIdx + perPage;
 class DashboardPage extends Component<any, State>{
     constructor(props: {}) {
         super(props);
     
         this.state = {
             productsData: [],
+            currentPage: 1,
+            perPage: 20,
         };
     }
 
@@ -55,6 +63,7 @@ class DashboardPage extends Component<any, State>{
 
                 this.setState({ 
                     productsData: dataProps.data,
+                    currentPage: 1,
                 });
             });
         } else {
@@ -67,7 +76,8 @@ class DashboardPage extends Component<any, State>{
                 // const data = dataProduct.data;
 
                 this.setState({ 
-                    productsData: dataProps.data
+                    productsData: dataProps.data,
+                    currentPage: 1,
                 });
             });
         }
@@ -93,14 +103,11 @@ class DashboardPage extends Component<any, State>{
     }
 
     render(){
-        // const { dataProps } = this.props;
-        // const data = dataProps.data;
-        // console.log(dataProps)
+        const startIdx = (this.state.currentPage - 1) * this.state.perPage;
+        const endIdx = Math.min(startIdx + this.state.perPage, this.state.productsData.length);
 
-        // const { userProps } = this.props;
-        // const role = userProps.data.user.role;
-        // const isAdmin = role === 'Admin';
-
+        // startIdx = (this.state.currentPage - 1) * this.state.perPage;
+        // endIdx = this.startIdx + this.state.perPage;
         return (
             <div className="text-gray-600 font-body">
                 <Navbar />
@@ -144,7 +151,8 @@ class DashboardPage extends Component<any, State>{
                     )}
                 <div className=" w-11/12 m-auto">
                     <div className="grid lg:grid-cols-5">
-                        {this.state.productsData.map((product:any) => {
+                    {/* {searchResults.slice(startIdx, endIdx).map((meal: any) => (  */}
+                        {this.state.productsData.slice(startIdx, endIdx).map((product:any) => {
                             return ( //buat komponen terpisah
                             <div key={product._id} className="max-w-sm w-full lg:max-w-full mb-4">
                                     <div className="m-auto w-60 h-96 border-r border-b border-l border-gray-400 lg:border-l lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
@@ -177,6 +185,20 @@ class DashboardPage extends Component<any, State>{
                                 </div>
                             )
                         })}
+                    </div>
+                    <div className="flex justify-center my-10">
+                            <button
+                                className="bg-gray-700 hover:bg-gray-400 text-white font-bold py-2 px-4 border border-blue-700 rounded ml-2"
+                                disabled={this.state.currentPage === 1}
+                                onClick={() => this.setState({ currentPage: this.state.currentPage - 1})}>
+                                Previous
+                            </button>
+                            <button
+                                className="bg-gray-700 hover:bg-gray-400 text-white font-bold py-2 px-4 border border-blue-700 rounded ml-2"
+                                disabled={endIdx >= this.state.productsData.length}
+                                onClick={() => this.setState({currentPage: this.state.currentPage + 1})}>
+                                Next
+                            </button>
                     </div>
                 </div>
                 
